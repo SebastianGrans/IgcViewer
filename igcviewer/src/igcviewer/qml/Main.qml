@@ -6,6 +6,7 @@ import QtQuick.Dialogs
 ApplicationWindow {
     id: root
     visible: true
+    property bool mapMaximized: false
     width: 980
     height: 860
     minimumWidth: 700
@@ -68,6 +69,29 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.leftMargin: 14
+            Layout.rightMargin: 14
+            //Layout.topMargin: bridge.hasData ? 8 : 0
+            height: bridge.hasData ? 1 : 0
+            color: "#1e293b"
+            visible: !root.mapMaximized
+        }
+
+        // map — grows to fill all remaining space
+        FlightMap {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: 150
+            Layout.leftMargin: 14
+            Layout.rightMargin: 14
+            Layout.topMargin: 8
+            Layout.bottomMargin: 8
+            maximized: root.mapMaximized
+            onToggleMaximize: root.mapMaximized = !root.mapMaximized
+        }
+
         // top bar
         RowLayout {
             Layout.fillWidth: true
@@ -75,6 +99,7 @@ ApplicationWindow {
             Layout.rightMargin: 14
             Layout.topMargin: 8
             spacing: 10
+            visible: !root.mapMaximized
             Button {
                 text: "📁  Load IGC File"
                 onClicked: fileDialog.open()
@@ -106,6 +131,7 @@ ApplicationWindow {
             Layout.topMargin: 6
             height: 1
             color: "#1e293b"
+            visible: !root.mapMaximized
         }
 
         // stats cards
@@ -114,7 +140,7 @@ ApplicationWindow {
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.topMargin: bridge.hasData ? 8 : 0
-            visible: bridge.hasData
+            visible: bridge.hasData && !root.mapMaximized
             columns: 3
             columnSpacing: 8
             rowSpacing: 8
@@ -131,24 +157,6 @@ ApplicationWindow {
             }
         }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.leftMargin: 14
-            Layout.rightMargin: 14
-            Layout.topMargin: bridge.hasData ? 8 : 0
-            height: bridge.hasData ? 1 : 0
-            color: "#1e293b"
-        }
-
-        // map — grows to fill all remaining space
-        FlightMap {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.minimumHeight: 150
-            Layout.leftMargin: 14
-            Layout.rightMargin: 14
-        }
-
         // altitude chart — fixed height at bottom
         AltitudeChart {
             Layout.fillWidth: true
@@ -156,6 +164,7 @@ ApplicationWindow {
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.bottomMargin: 10
+            visible: !root.mapMaximized
         }
     }
 }

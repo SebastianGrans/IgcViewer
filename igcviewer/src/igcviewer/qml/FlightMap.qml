@@ -5,6 +5,9 @@ import QtPositioning
 Item {
     id: root
 
+    property bool maximized: false
+    signal toggleMaximize
+
     // Placeholder shown before a file is loaded
     Rectangle {
         anchors.fill: parent
@@ -47,13 +50,16 @@ Item {
         MapQuickItem {
             coordinate: bridge.startCoordinate
             visible: bridge.hasData
-            anchorPoint.x: dot.width  / 2
+            anchorPoint.x: dot.width / 2
             anchorPoint.y: dot.height / 2
             sourceItem: Rectangle {
                 id: dot
-                width: 14; height: 14; radius: 7
+                width: 14
+                height: 14
+                radius: 7
                 color: "#10b981"
-                border.color: "white"; border.width: 2
+                border.color: "white"
+                border.width: 2
             }
         }
 
@@ -61,13 +67,16 @@ Item {
         MapQuickItem {
             coordinate: bridge.endCoordinate
             visible: bridge.hasData
-            anchorPoint.x: dotEnd.width  / 2
+            anchorPoint.x: dotEnd.width / 2
             anchorPoint.y: dotEnd.height / 2
             sourceItem: Rectangle {
                 id: dotEnd
-                width: 14; height: 14; radius: 7
+                width: 14
+                height: 14
+                radius: 7
                 color: "#ef4444"
-                border.color: "white"; border.width: 2
+                border.color: "white"
+                border.width: 2
             }
         }
 
@@ -75,13 +84,16 @@ Item {
         MapQuickItem {
             coordinate: bridge.highlightCoordinate
             visible: bridge.highlightedIndex >= 0
-            anchorPoint.x: dotHl.width  / 2
+            anchorPoint.x: dotHl.width / 2
             anchorPoint.y: dotHl.height / 2
             sourceItem: Rectangle {
                 id: dotHl
-                width: 18; height: 18; radius: 9
+                width: 18
+                height: 18
+                radius: 9
                 color: "#fbbf24"
-                border.color: "#f59e0b"; border.width: 2.5
+                border.color: "#f59e0b"
+                border.width: 2.5
             }
         }
 
@@ -90,8 +102,40 @@ Item {
             function onFlightLoaded() {
                 // Defer one frame so the polyline path is committed before
                 // fitting the viewport to it.
-                Qt.callLater(function() { flightMap.fitViewportToMapItems() })
+                Qt.callLater(function () {
+                    flightMap.fitViewportToMapItems();
+                });
             }
+        }
+    }
+
+    // Maximize / restore button — floats in the top-right corner of the map
+    Rectangle {
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 8
+            rightMargin: 8
+        }
+        width: 30
+        height: 30
+        radius: 5
+        color: expandHover.containsMouse ? "#2563eb" : "#1d4ed8"
+        z: 10
+
+        Text {
+            anchors.centerIn: parent
+            text: root.maximized ? "⊟" : "⛶"
+            color: "#f1f5f9"
+            font.pixelSize: 15
+        }
+
+        MouseArea {
+            id: expandHover
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.toggleMaximize()
         }
     }
 }
