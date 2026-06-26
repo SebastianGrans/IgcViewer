@@ -7,7 +7,7 @@ import QtQuick.tooling 1.2
 
 Module {
     Component {
-        file: "/home/grans/Projects/gtk_IgcViewer/igcviewer/src/igcviewer/bridge.py"
+        file: "/home/grans/Projects/gtk_IgcViewer/src/igcviewer/bridge.py"
         lineNumber: 0
         name: "FlightBridge"
         accessSemantics: "reference"
