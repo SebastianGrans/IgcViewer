@@ -39,7 +39,12 @@ def main() -> None:
         else:
             bridge.loadFile(args.igc_file)
 
-    sys.exit(app.exec())
+    ret = app.exec()
+    # Destroy the QML engine before bridge goes out of scope. If bridge is
+    # GC'd first, the engine's final binding evaluation fires with bridge=null
+    # and produces a flood of TypeError messages in the terminal.
+    del engine
+    sys.exit(ret)
 
 
 if __name__ == "__main__":
