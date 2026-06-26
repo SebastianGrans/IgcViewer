@@ -9,9 +9,9 @@ Rectangle {
     property string note: ""
 
     implicitHeight: col.implicitHeight + 20
-    color: "#0f172a"
+    color: Theme.surfaceLow
     radius: 8
-    border.color: "#1e293b"
+    border.color: Theme.divider
     border.width: 1
 
     Column {
@@ -22,7 +22,7 @@ Rectangle {
         Text {
             width: parent.width
             text: card.title
-            color: "#94a3b8"
+            color: Theme.textSecondary
             font.pointSize: 9
             elide: Text.ElideRight
         }
@@ -31,12 +31,12 @@ Rectangle {
             spacing: 5
             Text {
                 text: card.value
-                color: "#f1f5f9"
+                color: Theme.textPrimary
                 font { pointSize: 15; bold: true }
             }
             Text {
                 text: card.unit
-                color: "#64748b"
+                color: Theme.textMuted
                 font.pointSize: 10
                 anchors.bottom: parent.bottom
                 bottomPadding: 2

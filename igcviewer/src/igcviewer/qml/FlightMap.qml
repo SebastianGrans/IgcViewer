@@ -11,14 +11,14 @@ Item {
     // Placeholder shown before a file is loaded
     Rectangle {
         anchors.fill: parent
-        color: "#0f172a"
+        color: Theme.surfaceLow
         radius: 6
         visible: !bridge.hasData
 
         Text {
             anchors.centerIn: parent
             text: "Load an IGC file to see the flight track."
-            color: "#475569"
+            color: Theme.textMuted
             font.pointSize: 11
         }
     }

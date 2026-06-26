@@ -12,7 +12,7 @@ ApplicationWindow {
     minimumWidth: 700
     minimumHeight: 600
     title: "✈️ IGC Flight Viewer"
-    color: "#0a0e17"
+    color: Theme.windowBg
 
     FileDialog {
         id: fileDialog
@@ -47,14 +47,14 @@ ApplicationWindow {
         width: errorText.implicitWidth + 32
         height: 36
         radius: 6
-        color: "#7f1d1d"
-        border.color: "#ef4444"
+        color: Theme.errorBg
+        border.color: Theme.errorBorder
         border.width: 1
         z: 10
         Text {
             id: errorText
             anchors.centerIn: parent
-            color: "#fca5a5"
+            color: Theme.errorText
             font.pointSize: 10
         }
         Timer {
@@ -75,7 +75,7 @@ ApplicationWindow {
             Layout.rightMargin: 14
             //Layout.topMargin: bridge.hasData ? 8 : 0
             height: bridge.hasData ? 1 : 0
-            color: "#1e293b"
+            color: Theme.divider
             visible: !root.mapMaximized
         }
 
@@ -118,9 +118,62 @@ ApplicationWindow {
             Text {
                 Layout.fillWidth: true
                 text: bridge.statusText
-                color: bridge.hasData ? "#86efac" : "#64748b"
+                color: bridge.hasData ? Theme.textSuccess : Theme.textMuted
                 font.pointSize: 10
                 elide: Text.ElideRight
+            }
+            Rectangle {
+                height: 26
+                width: 84
+                radius: 5
+                clip: true
+                border.color: Theme.divider
+                border.width: 1
+                color: Theme.surfaceLow
+
+                Row {
+                    anchors.fill: parent
+
+                    Repeater {
+                        model: [
+                            { icon: "☀", mode: "light" },
+                            { icon: "⊙", mode: "system" },
+                            { icon: "☾", mode: "dark" }
+                        ]
+
+                        delegate: Rectangle {
+                            required property var modelData
+                            required property int index
+                            width: 28
+                            height: 26
+                            color: Theme.mode === modelData.mode
+                                ? "#1d4ed8"
+                                : (modeArea.containsMouse ? Theme.divider : "transparent")
+
+                            Rectangle {
+                                visible: index > 0
+                                anchors { top: parent.top; bottom: parent.bottom; left: parent.left }
+                                width: 1
+                                color: Theme.divider
+                            }
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.icon
+                                color: Theme.mode === modelData.mode ? "#f1f5f9" : Theme.textMuted
+                                font.pixelSize: 13
+                            }
+
+                            MouseArea {
+                                id: modeArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: Theme.mode = modelData.mode
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -130,7 +183,7 @@ ApplicationWindow {
             Layout.rightMargin: 14
             Layout.topMargin: 6
             height: 1
-            color: "#1e293b"
+            color: Theme.divider
             visible: !root.mapMaximized
         }
 

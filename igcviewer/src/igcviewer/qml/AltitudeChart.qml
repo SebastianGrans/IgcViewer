@@ -22,6 +22,11 @@ Item {
         }
     }
 
+    Connections {
+        target: Theme
+        function onIsDarkChanged() { canvas.requestPaint() }
+    }
+
     Canvas {
         id: canvas
         anchors.fill: parent
@@ -34,7 +39,7 @@ Item {
             var plotH = h - 2 * pad;
 
             // Background
-            ctx.fillStyle = "#0a0e17";
+            ctx.fillStyle = Theme.chartBg.toString();
             ctx.fillRect(0, 0, w, h);
 
             var alts = root.altitudes;
@@ -58,7 +63,8 @@ Item {
             root._maxDist = maxDist;
 
             // Grid lines
-            ctx.strokeStyle = "rgba(51, 65, 85, 0.6)";
+            ctx.strokeStyle = Theme.chartGrid.toString();
+            ctx.globalAlpha = 0.6;
             ctx.lineWidth = 0.5;
             for (var gi = 0; gi <= 4; gi++) {
                 var gy = pad + plotH - gi * plotH / 4;
@@ -69,7 +75,8 @@ Item {
             }
 
             // Altitude profile line
-            ctx.strokeStyle = "#8b5cf6";
+            ctx.globalAlpha = 1.0;
+            ctx.strokeStyle = Theme.chartLine.toString();
             ctx.lineWidth = 2;
             ctx.beginPath();
             for (var pi = 0; pi < alts.length; pi++) {
@@ -110,7 +117,7 @@ Item {
             }
 
             // Y-axis labels
-            ctx.fillStyle = "#64748b";
+            ctx.fillStyle = Theme.chartLabel.toString();
             ctx.font = "10px sans-serif";
             for (var yi = 0; yi <= 4; yi++) {
                 var yVal = Math.round(minAlt + yi * altRange / 4);
