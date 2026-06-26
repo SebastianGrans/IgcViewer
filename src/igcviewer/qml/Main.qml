@@ -7,6 +7,7 @@ ApplicationWindow {
     id: root
     visible: true
     property bool mapMaximized: false
+    property bool statsCollapsed: false
     width: 980
     height: 860
     minimumWidth: 700
@@ -190,40 +191,83 @@ ApplicationWindow {
             }
         }
 
-        Rectangle {
+        // Divider with collapse toggle
+        RowLayout {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.topMargin: 6
-            implicitHeight: 1
-            color: Theme.divider
             visible: !root.mapMaximized
-        }
+            spacing: 6
 
-        // stats cards
-        GridLayout {
-            Layout.fillWidth: true
-            Layout.leftMargin: 14
-            Layout.rightMargin: 14
-            Layout.topMargin: FlightBridge.hasData ? 8 : 0
-            visible: FlightBridge.hasData && !root.mapMaximized
-            columns: 4
-            columnSpacing: 8
-            rowSpacing: 8
-            Repeater {
-                model: FlightBridge.hasData ? JSON.parse(FlightBridge.statsJson) : []
-                delegate: StatsCard {
-                    required property var modelData
-                    Layout.fillWidth: true
-                    title: modelData.title
-                    value: modelData.value
-                    unit: modelData.unit
-                    note: modelData.note
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 1
+                color: Theme.divider
+            }
+
+            Text {
+                text: "flight metrics"
+                color: Theme.textMuted
+                font.pointSize: 8
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 1
+                color: Theme.divider
+            }
+
+            Text {
+                text: "⌞ ⌝"
+                color: Theme.textMuted
+                font.pixelSize: 11
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.statsCollapsed = !root.statsCollapsed
                 }
             }
         }
 
-        // altitude chart — fixed height at bottom
+        // Collapsible stats cards
+        Item {
+            Layout.fillWidth: true
+            Layout.leftMargin: 14
+            Layout.rightMargin: 14
+            Layout.preferredHeight: root.statsCollapsed ? 0 : statsGrid.implicitHeight + (FlightBridge.hasData ? 8 : 0)
+            clip: true
+            visible: !root.mapMaximized && FlightBridge.hasData
+
+            Behavior on Layout.preferredHeight {
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            GridLayout {
+                id: statsGrid
+                width: parent.width
+                y: 8
+                columns: 4
+                columnSpacing: 8
+                rowSpacing: 8
+                Repeater {
+                    model: FlightBridge.hasData ? JSON.parse(FlightBridge.statsJson) : []
+                    delegate: StatsCard {
+                        required property var modelData
+                        Layout.fillWidth: true
+                        title: modelData.title
+                        value: modelData.value
+                        unit: modelData.unit
+                        note: modelData.note
+                    }
+                }
+            }
+        }
+
+        // altitude chart
         AltitudeChart {
             Layout.fillWidth: true
             Layout.preferredHeight: 200
