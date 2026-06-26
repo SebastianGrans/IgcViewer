@@ -147,6 +147,37 @@ Item {
         }
     }
 
+    // Fit-to-track button — snaps viewport back to the flight path
+    Rectangle {
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 8
+            rightMargin: 46
+        }
+        width: 30
+        height: 30
+        radius: 5
+        visible: FlightBridge.hasData
+        color: fitHover.containsMouse ? "#2563eb" : "#1d4ed8"
+        z: 10
+
+        Text {
+            anchors.centerIn: parent
+            text: "⊙"
+            color: "#f1f5f9"
+            font.pixelSize: 15
+        }
+
+        MouseArea {
+            id: fitHover
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
+        }
+    }
+
     // Maximize / restore button — floats in the top-right corner of the map
     Rectangle {
         anchors {
