@@ -28,7 +28,9 @@ def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     d_lat = math.radians(lat2 - lat1)
     d_lon = math.radians(lon2 - lon1)
     a = math.sin(d_lat / 2) ** 2 + (
-        math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(d_lon / 2) ** 2
+        math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(d_lon / 2) ** 2
     )
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
@@ -46,7 +48,9 @@ def parse_igc(path: str) -> FlightData:
     data = FlightData()
 
     for m in _B_RECORD.finditer(content):
-        time_str, lat_raw, lat_hem, lon_raw, lon_hem, status, baro_raw, gps_raw = m.groups()
+        time_str, lat_raw, lat_hem, lon_raw, lon_hem, status, baro_raw, gps_raw = (
+            m.groups()
+        )
         if status == "V":
             continue
         lat = _parse_coordinate(lat_raw, lat_hem)
@@ -55,7 +59,9 @@ def parse_igc(path: str) -> FlightData:
         alt_baro = int(baro_raw)
         alt = alt_gps if alt_gps > -500 else alt_baro
         seconds = int(time_str[:2]) * 3600 + int(time_str[2:4]) * 60 + int(time_str[4:6])
-        data.points.append(FlightPoint(lat=lat, lon=lon, alt=alt, time=time_str, seconds=seconds))
+        data.points.append(
+            FlightPoint(lat=lat, lon=lon, alt=alt, time=time_str, seconds=seconds)
+        )
 
     if len(data.points) < 2:
         return data

@@ -58,11 +58,31 @@ class FlightBridge(QObject):
                     "unit": "km",
                     "note": "including thermal circling",
                 },
-                {"title": "Max Altitude", "value": str(s.max_alt), "unit": "m", "note": ""},
+                {
+                    "title": "Max Altitude",
+                    "value": str(s.max_alt),
+                    "unit": "m",
+                    "note": "",
+                },
                 {"title": "Altitude Gain", "value": str(s.gain), "unit": "m", "note": ""},
-                {"title": "Max Speed", "value": f"{s.max_speed:.1f}", "unit": "km/h", "note": "GPS · estimated"},
-                {"title": "Max Climb", "value": f"{s.max_climb:.1f}", "unit": "m/s", "note": ""},
-                {"title": "Avg Thermal", "value": f"{s.avg_thermal_climb:.1f}", "unit": "m/s", "note": ""},
+                {
+                    "title": "Max Speed",
+                    "value": f"{s.max_speed:.1f}",
+                    "unit": "km/h",
+                    "note": "GPS · estimated",
+                },
+                {
+                    "title": "Max Climb",
+                    "value": f"{s.max_climb:.1f}",
+                    "unit": "m/s",
+                    "note": "",
+                },
+                {
+                    "title": "Avg Thermal",
+                    "value": f"{s.avg_thermal_climb:.1f}",
+                    "unit": "m/s",
+                    "note": "",
+                },
             ]
         )
 
@@ -93,7 +113,9 @@ class FlightBridge(QObject):
             return QGeoRectangle()
         lats = [p.lat for p in self._flight.points]
         lons = [p.lon for p in self._flight.points]
-        return QGeoRectangle(QGeoCoordinate(max(lats), min(lons)), QGeoCoordinate(min(lats), max(lons)))
+        return QGeoRectangle(
+            QGeoCoordinate(max(lats), min(lons)), QGeoCoordinate(min(lats), max(lons))
+        )
 
     @Property(QGeoCoordinate, notify=flightLoaded)
     def startCoordinate(self) -> QGeoCoordinate:
