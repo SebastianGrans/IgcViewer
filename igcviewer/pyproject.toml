@@ -1,0 +1,25 @@
+[project]
+name = "igcviewer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sebastian Grans", email = "sebastian.grans@zivid.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pyside6>=6.11.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.23,<0.12.0"]
+build-backend = "uv_build"
+
+[project.scripts]
+igcviewer = "igcviewer.main:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.20",
+    "ty>=0.0.54",
+]
