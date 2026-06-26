@@ -1,11 +1,5 @@
 # TODOs
 
-## Make the stats labels equal height
-
-Currently, the `Flight Distance` and `Max Speed` labels are taller than the others.
-
-This is because those two labels have a `note` (see `statsJson` in `bridge.py`)
-
 ## Add "Maximize" button to the map
 
 title

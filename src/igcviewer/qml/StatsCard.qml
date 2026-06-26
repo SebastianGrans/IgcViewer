@@ -45,10 +45,10 @@ Rectangle {
 
         Text {
             width: parent.width
-            text: card.note
+            text: card.note.length > 0 ? card.note : " "
             color: "#64748b"
             font.pointSize: 8
-            visible: card.note.length > 0
+            opacity: card.note.length > 0 ? 1 : 0
             elide: Text.ElideRight
         }
     }
