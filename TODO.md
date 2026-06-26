@@ -11,3 +11,7 @@ title
 ## Change hight profile x axis
 
 E.g. time instead of distance.
+
+## Enable clicking on the flight path on the map
+
+and tooltips?
