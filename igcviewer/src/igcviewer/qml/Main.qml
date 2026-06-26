@@ -17,19 +17,19 @@ ApplicationWindow {
     FileDialog {
         id: fileDialog
         nameFilters: ["IGC files (*.igc *.IGC)", "All files (*)"]
-        onAccepted: bridge.loadFile(selectedFile.toString())
+        onAccepted: FlightBridge.loadFile(selectedFile.toString())
     }
 
     DropArea {
         anchors.fill: parent
         onDropped: function (drop) {
             if (drop.hasUrls)
-                bridge.loadFile(drop.urls[0].toString());
+                FlightBridge.loadFile(drop.urls[0].toString());
         }
     }
 
     Connections {
-        target: bridge
+        target: FlightBridge
         function onFlightError(msg) {
             errorText.text = "⚠️ " + msg;
             errorBar.visible = true;
@@ -73,8 +73,8 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            //Layout.topMargin: bridge.hasData ? 8 : 0
-            implicitHeight: bridge.hasData ? 1 : 0
+            //Layout.topMargin: FlightBridge.hasData ? 8 : 0
+            implicitHeight: FlightBridge.hasData ? 1 : 0
             color: Theme.divider
             visible: !root.mapMaximized
         }
@@ -118,8 +118,8 @@ ApplicationWindow {
             }
             Text {
                 Layout.fillWidth: true
-                text: bridge.statusText
-                color: bridge.hasData ? Theme.textSuccess : Theme.textMuted
+                text: FlightBridge.statusText
+                color: FlightBridge.hasData ? Theme.textSuccess : Theme.textMuted
                 font.pointSize: 10
                 elide: Text.ElideRight
             }
@@ -205,13 +205,13 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            Layout.topMargin: bridge.hasData ? 8 : 0
-            visible: bridge.hasData && !root.mapMaximized
+            Layout.topMargin: FlightBridge.hasData ? 8 : 0
+            visible: FlightBridge.hasData && !root.mapMaximized
             columns: 3
             columnSpacing: 8
             rowSpacing: 8
             Repeater {
-                model: bridge.hasData ? JSON.parse(bridge.statsJson) : []
+                model: FlightBridge.hasData ? JSON.parse(FlightBridge.statsJson) : []
                 delegate: StatsCard {
                     required property var modelData
                     Layout.fillWidth: true

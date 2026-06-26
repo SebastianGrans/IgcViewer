@@ -31,7 +31,7 @@ Item {
     Map {
         id: flightMap
         anchors.fill: parent
-        visible: bridge.hasData && root.fitted
+        visible: FlightBridge.hasData && root.fitted
         copyrightsVisible: false
 
         plugin: Plugin {
@@ -48,13 +48,13 @@ Item {
         MapPolyline {
             line.width: 3
             line.color: "#38bdf8"
-            path: bridge.trackCoordinates
+            path: FlightBridge.trackCoordinates
         }
 
         // Start marker (green)
         MapQuickItem {
-            coordinate: bridge.startCoordinate
-            visible: bridge.hasData
+            coordinate: FlightBridge.startCoordinate
+            visible: FlightBridge.hasData
             anchorPoint.x: dot.width / 2
             anchorPoint.y: dot.height / 2
             sourceItem: Rectangle {
@@ -70,8 +70,8 @@ Item {
 
         // End marker (red)
         MapQuickItem {
-            coordinate: bridge.endCoordinate
-            visible: bridge.hasData
+            coordinate: FlightBridge.endCoordinate
+            visible: FlightBridge.hasData
             anchorPoint.x: dotEnd.width / 2
             anchorPoint.y: dotEnd.height / 2
             sourceItem: Rectangle {
@@ -87,8 +87,8 @@ Item {
 
         // Highlight marker (orange) — synced from altitude chart clicks
         MapQuickItem {
-            coordinate: bridge.highlightCoordinate
-            visible: bridge.highlightedIndex >= 0
+            coordinate: FlightBridge.highlightCoordinate
+            visible: FlightBridge.highlightedIndex >= 0
             anchorPoint.x: dotHl.width / 2
             anchorPoint.y: dotHl.height / 2
             sourceItem: Rectangle {
@@ -113,23 +113,24 @@ Item {
             interval: 40
             repeat: false
             onTriggered: {
-                var b = bridge.trackBounds;
+                var b = FlightBridge.trackBounds;
                 flightMap.fitViewportToGeoShape(b, 20);
                 root.fitted = true;
             }
         }
 
         Connections {
-            target: bridge
+            target: FlightBridge
             function onFlightLoaded() {
                 root.fitted = false;
                 if (flightMap.mapReady) {
                     fitTimer.restart();
                 } else {
-                    flightMap.mapReadyChanged.connect(function () {
-                        flightMap.mapReadyChanged.disconnect(conn);
+                    let onReady = function () {
+                        flightMap.mapReadyChanged.disconnect(onReady);
                         fitTimer.restart();
-                    });
+                    };
+                    flightMap.mapReadyChanged.connect(onReady);
                 }
             }
         }

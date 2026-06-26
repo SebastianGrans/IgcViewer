@@ -1,21 +1,54 @@
+from __future__ import annotations
+
 import json
+from typing import ClassVar, TypeVar
 
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
 from PySide6.QtPositioning import QGeoCoordinate, QGeoRectangle
+from PySide6.QtQml import QmlElement as _QmlElement
+from PySide6.QtQml import QmlSingleton as _QmlSingleton
 
 from .models import FlightData
 from .parser import parse_igc
 
+# The type stubs for QmlElement and QmlSingleton are
+# def QmlElement(arg__1: object, /) -> object: ...
+# They should have been something like this:
+_T = TypeVar("_T")
 
+
+def QmlElement(cls: type[_T]) -> type[_T]:
+    return _QmlElement(cls)  # ty: ignore[invalid-return-type]
+
+
+def QmlSingleton(cls: type[_T]) -> type[_T]:
+    return _QmlSingleton(cls)  # ty: ignore[invalid-return-type]
+
+
+QML_IMPORT_NAME = "igcviewer"
+QML_IMPORT_MAJOR_VERSION = 1
+
+
+@QmlElement
+@QmlSingleton
 class FlightBridge(QObject):
     flightLoaded = Signal()
     flightError = Signal(str)
     highlightChanged = Signal(int)
 
+    _instance: ClassVar[FlightBridge | None] = None
+
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
+        FlightBridge._instance = self
         self._flight = FlightData()
         self._highlighted_index = -1
+
+    @classmethod
+    def instance(cls) -> FlightBridge:
+        if cls._instance is None:
+            raise RuntimeError("FlightBridge singleton not yet created")
+        return cls._instance
 
     # ------------------------------------------------------------------ slots
 
@@ -103,7 +136,7 @@ class FlightBridge(QObject):
 
     # ---------------------------------------------------------- map coordinates
 
-    @Property(list, notify=flightLoaded)
+    @Property("QVariantList", notify=flightLoaded)  # ty: ignore[invalid-argument-type]
     def trackCoordinates(self) -> list:
         return [QGeoCoordinate(p.lat, p.lon) for p in self._flight.points]
 

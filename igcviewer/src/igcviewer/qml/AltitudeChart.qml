@@ -10,9 +10,9 @@ Item {
     property real _maxDist: 1
 
     Connections {
-        target: bridge
+        target: FlightBridge
         function onFlightLoaded() {
-            var d = JSON.parse(bridge.chartJson);
+            var d = JSON.parse(FlightBridge.chartJson);
             root.distances = d.distances;
             root.altitudes = d.altitudes;
             canvas.requestPaint();
@@ -92,7 +92,7 @@ Item {
             ctx.stroke();
 
             // Highlight
-            var hi = bridge.highlightedIndex;
+            var hi = FlightBridge.highlightedIndex;
             if (hi >= 0 && hi < alts.length) {
                 var hx = pad + (dists[hi] / maxDist) * plotW;
                 var hy = pad + plotH - ((alts[hi] - minAlt) / altRange) * plotH;
@@ -145,7 +145,7 @@ Item {
             var pad = 42;
             var plotW = root.width - 2 * pad;
             if (mouse.x < pad || mouse.x > pad + plotW) {
-                bridge.setHighlight(-1);
+                FlightBridge.setHighlight(-1);
                 return;
             }
             var clickDist = ((mouse.x - pad) / plotW) * root._maxDist;
@@ -158,7 +158,7 @@ Item {
                     bestIdx = i;
                 }
             }
-            bridge.setHighlight(bestIdx);
+            FlightBridge.setHighlight(bestIdx);
         }
     }
 }

@@ -1,4 +1,6 @@
 module igcviewer
+depends QtPositioning 6.0
+typeinfo igcviewer.qmltypes
 AltitudeChart 1.0 AltitudeChart.qml
 FlightMap 1.0 FlightMap.qml
 Main 1.0 Main.qml

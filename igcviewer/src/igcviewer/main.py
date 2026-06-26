@@ -4,11 +4,9 @@ import signal
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from rich.logging import RichHandler
-
 
 from .bridge import FlightBridge
 
@@ -51,28 +49,24 @@ def main() -> None:
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")
 
-    bridge = FlightBridge()
-
     engine = QQmlApplicationEngine()
-    engine.rootContext().setContextProperty("bridge", bridge)
-
-    qml_path = Path(__file__).parent / "qml" / "Main.qml"
-    engine.load(QUrl.fromLocalFile(str(qml_path)))
+    engine.addImportPath(str(Path(__file__).parent))
+    engine.loadFromModule("qml", "Main")
 
     if not engine.rootObjects():
         sys.exit(1)
 
     if args.igc_file:
+        bridge = FlightBridge.instance()  # type: ignore[attr-defined]
         if not Path(args.igc_file).exists():
-            # Show an error message in the GUI
             bridge.flightError.emit(f"File not found: {args.igc_file}")
         else:
             bridge.loadFile(args.igc_file)
 
     ret = app.exec()
-    # Destroy the QML engine before bridge goes out of scope. If bridge is
-    # GC'd first, the engine's final binding evaluation fires with bridge=null
-    # and produces a flood of TypeError messages in the terminal.
+    # Destroy the QML engine before the singleton goes out of scope, otherwise
+    # the engine's final binding evaluation fires with FlightBridge=null and
+    # produces a flood of TypeError messages.
     del engine
     sys.exit(ret)
 
