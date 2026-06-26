@@ -1,0 +1,5 @@
+module igcviewer
+AltitudeChart 1.0 AltitudeChart.qml
+FlightMap 1.0 FlightMap.qml
+Main 1.0 Main.qml
+StatsCard 1.0 StatsCard.qml

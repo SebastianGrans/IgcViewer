@@ -1,0 +1,7 @@
+{
+    "qt-qml.qmlls.additionalImportPaths": [
+        "igcviewer/src/igcviewer/qml",
+        // NOTE: To get the Qml language server to work, you need to point it to where you have Qt installed.
+        "~/Qt/6.11.1/gcc_64/qml"
+    ],
+}
