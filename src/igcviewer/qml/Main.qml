@@ -12,7 +12,7 @@ ApplicationWindow {
     height: 860
     minimumWidth: 700
     minimumHeight: 600
-    title: "✈️ IGC Flight Viewer"
+    title: "🪂 IGC Flight Viewer"
     color: Theme.windowBg
 
     FileDialog {
