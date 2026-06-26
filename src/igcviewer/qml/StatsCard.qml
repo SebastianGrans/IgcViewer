@@ -23,7 +23,7 @@ Rectangle {
             width: parent.width
             text: card.title
             color: Theme.textSecondary
-            font.pointSize: 9
+            font.pointSize: Theme.fontSm
             elide: Text.ElideRight
         }
 
@@ -32,12 +32,12 @@ Rectangle {
             Text {
                 text: card.value
                 color: Theme.textPrimary
-                font { pointSize: 15; bold: true }
+                font { pointSize: Theme.fontXl; bold: true }
             }
             Text {
                 text: card.unit
                 color: Theme.textMuted
-                font.pointSize: 10
+                font.pointSize: Theme.fontMd
                 anchors.bottom: parent.bottom
                 bottomPadding: 2
             }
@@ -47,7 +47,7 @@ Rectangle {
             width: parent.width
             text: card.note.length > 0 ? card.note : " "
             color: "#64748b"
-            font.pointSize: 8
+            font.pointSize: Theme.fontXs
             opacity: card.note.length > 0 ? 1 : 0
             elide: Text.ElideRight
         }

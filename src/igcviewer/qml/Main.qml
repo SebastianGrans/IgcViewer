@@ -29,6 +29,22 @@ ApplicationWindow {
         }
     }
 
+    Shortcut {
+        sequences: [StandardKey.ZoomIn]
+        context: Qt.ApplicationShortcut
+        onActivated: Theme.fontScale = Math.min(2.0, Theme.fontScale + 0.1)
+    }
+    Shortcut {
+        sequences: [StandardKey.ZoomOut]
+        context: Qt.ApplicationShortcut
+        onActivated: Theme.fontScale = Math.max(0.5, Theme.fontScale - 0.1)
+    }
+    Shortcut {
+        sequence: "Ctrl+0"
+        context: Qt.ApplicationShortcut
+        onActivated: Theme.fontScale = 1.0
+    }
+
     Connections {
         target: FlightBridge
         function onFlightError(msg) {
@@ -56,7 +72,7 @@ ApplicationWindow {
             id: errorText
             anchors.centerIn: parent
             color: Theme.errorText
-            font.pointSize: 10
+            font.pointSize: Theme.fontMd
         }
         Timer {
             id: errorTimer
@@ -74,7 +90,6 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            //Layout.topMargin: FlightBridge.hasData ? 8 : 0
             implicitHeight: FlightBridge.hasData ? 1 : 0
             color: Theme.divider
             visible: !root.mapMaximized
@@ -112,7 +127,7 @@ ApplicationWindow {
                 contentItem: Text {
                     text: loadBtn.text
                     color: "#f1f5f9"
-                    font.pointSize: 10
+                    font.pointSize: Theme.fontMd
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -121,7 +136,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 text: FlightBridge.statusText
                 color: FlightBridge.hasData ? Theme.textSuccess : Theme.textMuted
-                font.pointSize: 10
+                font.pointSize: Theme.fontMd
                 elide: Text.ElideRight
             }
             Rectangle {
@@ -209,7 +224,7 @@ ApplicationWindow {
             Text {
                 text: "flight metrics"
                 color: Theme.textMuted
-                font.pointSize: 8
+                font.pointSize: Theme.fontXs
             }
 
             Rectangle {

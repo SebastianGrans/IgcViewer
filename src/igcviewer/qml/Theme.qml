@@ -22,6 +22,14 @@ QtObject {
     readonly property color errorBg: isDark ? "#7f1d1d" : "#fef2f2"
     readonly property color errorBorder: "#ef4444"
     readonly property color errorText: isDark ? "#fca5a5" : "#dc2626"
+    // Font sizes (pointSize) — scaled by fontScale
+    property real fontScale: 1.0
+    readonly property int fontXs: Math.round(8 * fontScale)
+    readonly property int fontSm: Math.round(9 * fontScale)
+    readonly property int fontMd: Math.round(10 * fontScale)
+    readonly property int fontLg: Math.round(11 * fontScale)
+    readonly property int fontXl: Math.round(15 * fontScale)
+
     readonly property color chartBg: isDark ? "#0a0e17" : "#f8fafc"
     readonly property color chartGrid: isDark ? "#334155" : "#94a3b8"
     readonly property color chartLine: isDark ? "#8b5cf6" : "#7c3aed"

@@ -24,7 +24,7 @@ Item {
             anchors.centerIn: parent
             text: "Load an IGC file to see the flight track."
             color: Theme.textMuted
-            font.pointSize: 11
+            font.pointSize: Theme.fontLg
         }
     }
 
