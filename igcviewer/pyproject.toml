@@ -3,7 +3,7 @@ name = "igcviewer"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [{ name = "Sebastian Grans", email = "sebastian.grans@zivid.com" }]
+authors = [{ name = "Sebastian Grans", email = "sebastian.grans@gmail.com" }]
 requires-python = ">=3.13"
 dependencies = ["pyside6>=6.11.1", "rich>=15.0.0"]
 
