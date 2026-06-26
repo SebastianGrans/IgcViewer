@@ -18,7 +18,7 @@ Item {
         // has been fitted to the flight track.
         // This prevents briefly showing the map centered around London, before the viewport is
         // adjusted to the flight track.
-        visible: !flightMap.visible
+        visible: !flightMapView.visible
 
         Text {
             anchors.centerIn: parent
@@ -28,13 +28,12 @@ Item {
         }
     }
 
-    Map {
-        id: flightMap
+    MapView {
+        id: flightMapView
         anchors.fill: parent
         visible: FlightBridge.hasData && root.fitted
-        copyrightsVisible: false
-
-        plugin: Plugin {
+        map.copyrightsVisible: false
+        map.plugin: Plugin {
             name: "osm"
             // Use a single stable tile provider; disable auto-discovery to
             // avoid network calls probing alternative providers at startup.
@@ -43,95 +42,107 @@ Item {
                 value: "true"
             }
         }
+    }
 
-        // Flight track
-        MapPolyline {
-            line.width: 3
-            line.color: "#38bdf8"
-            path: FlightBridge.trackCoordinates
+    // Map items are declared here and added to the inner map via addMapItem(),
+    // because MapView does not forward declarative children to its inner Map.
+    MapPolyline {
+        id: trackPolyline
+        line.width: 3
+        line.color: "#38bdf8"
+        path: FlightBridge.trackCoordinates
+    }
+
+    // Start marker (green)
+    MapQuickItem {
+        id: startMarker
+        coordinate: FlightBridge.startCoordinate
+        visible: FlightBridge.hasData
+        anchorPoint.x: dot.width / 2
+        anchorPoint.y: dot.height / 2
+        sourceItem: Rectangle {
+            id: dot
+            width: 14
+            height: 14
+            radius: 7
+            color: "#10b981"
+            border.color: "white"
+            border.width: 2
         }
+    }
 
-        // Start marker (green)
-        MapQuickItem {
-            coordinate: FlightBridge.startCoordinate
-            visible: FlightBridge.hasData
-            anchorPoint.x: dot.width / 2
-            anchorPoint.y: dot.height / 2
-            sourceItem: Rectangle {
-                id: dot
-                width: 14
-                height: 14
-                radius: 7
-                color: "#10b981"
-                border.color: "white"
-                border.width: 2
-            }
+    // End marker (red)
+    MapQuickItem {
+        id: endMarker
+        coordinate: FlightBridge.endCoordinate
+        visible: FlightBridge.hasData
+        anchorPoint.x: dotEnd.width / 2
+        anchorPoint.y: dotEnd.height / 2
+        sourceItem: Rectangle {
+            id: dotEnd
+            width: 14
+            height: 14
+            radius: 7
+            color: "#ef4444"
+            border.color: "white"
+            border.width: 2
         }
+    }
 
-        // End marker (red)
-        MapQuickItem {
-            coordinate: FlightBridge.endCoordinate
-            visible: FlightBridge.hasData
-            anchorPoint.x: dotEnd.width / 2
-            anchorPoint.y: dotEnd.height / 2
-            sourceItem: Rectangle {
-                id: dotEnd
-                width: 14
-                height: 14
-                radius: 7
-                color: "#ef4444"
-                border.color: "white"
-                border.width: 2
-            }
+    // Highlight marker (orange) — synced from altitude chart clicks
+    MapQuickItem {
+        id: highlightMarker
+        coordinate: FlightBridge.highlightCoordinate
+        visible: FlightBridge.highlightedIndex >= 0
+        anchorPoint.x: dotHl.width / 2
+        anchorPoint.y: dotHl.height / 2
+        sourceItem: Rectangle {
+            id: dotHl
+            width: 18
+            height: 18
+            radius: 9
+            color: "#fbbf24"
+            border.color: "#f59e0b"
+            border.width: 2.5
         }
+    }
 
-        // Highlight marker (orange) — synced from altitude chart clicks
-        MapQuickItem {
-            coordinate: FlightBridge.highlightCoordinate
-            visible: FlightBridge.highlightedIndex >= 0
-            anchorPoint.x: dotHl.width / 2
-            anchorPoint.y: dotHl.height / 2
-            sourceItem: Rectangle {
-                id: dotHl
-                width: 18
-                height: 18
-                radius: 9
-                color: "#fbbf24"
-                border.color: "#f59e0b"
-                border.width: 2.5
-            }
+    Component.onCompleted: {
+        flightMapView.map.addMapItem(trackPolyline);
+        flightMapView.map.addMapItem(startMarker);
+        flightMapView.map.addMapItem(endMarker);
+        flightMapView.map.addMapItem(highlightMarker);
+    }
+
+    Timer {
+        // NOTE: Without this, there were cases where setting the map bounding box would fail.
+        // Sometimes it would only show the world map, other times it would show a small section of the
+        // flight path.
+        // This delays setting the map bounding box to mitigate that.
+        //
+        // TODO: Figure out the root cause.
+        id: fitTimer
+        interval: 40
+        repeat: false
+        onTriggered: {
+            var b = FlightBridge.trackBounds;
+            flightMapView.map.fitViewportToGeoShape(b, 20);
+            root.fitted = true;
         }
+    }
 
-        Timer {
-            // NOTE: Without this, there were cases where setting the map bounding box would fail.
-            // Sometimes it would only show the world map, other times it would show a small section of the
-            // flight path.
-            // This delays setting the map bounding box to mitigate that.
-            //
-            // TODO: Figure out the root cause.
-            id: fitTimer
-            interval: 40
-            repeat: false
-            onTriggered: {
-                var b = FlightBridge.trackBounds;
-                flightMap.fitViewportToGeoShape(b, 20);
-                root.fitted = true;
-            }
-        }
-
-        Connections {
-            target: FlightBridge
-            function onFlightLoaded() {
-                root.fitted = false;
-                if (flightMap.mapReady) {
+    Connections {
+        target: FlightBridge
+        function onFlightLoaded() {
+            root.fitted = false;
+            if (flightMapView.map.mapReady) {
+                fitTimer.restart();
+            } else {
+                let onReady = function () {
+                    flightMapView.map.mapReadyChanged.disconnect(onReady);
                     fitTimer.restart();
-                } else {
-                    let onReady = function () {
-                        flightMap.mapReadyChanged.disconnect(onReady);
-                        fitTimer.restart();
-                    };
-                    flightMap.mapReadyChanged.connect(onReady);
-                }
+                };
+                flightMapView.map.mapReadyChanged.connect(onReady);
             }
         }
     }
