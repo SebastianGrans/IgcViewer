@@ -207,7 +207,7 @@ ApplicationWindow {
             Layout.rightMargin: 14
             Layout.topMargin: FlightBridge.hasData ? 8 : 0
             visible: FlightBridge.hasData && !root.mapMaximized
-            columns: 3
+            columns: 4
             columnSpacing: 8
             rowSpacing: 8
             Repeater {
@@ -227,6 +227,7 @@ ApplicationWindow {
         AltitudeChart {
             Layout.fillWidth: true
             Layout.preferredHeight: 200
+            Layout.topMargin: 10
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.bottomMargin: 10

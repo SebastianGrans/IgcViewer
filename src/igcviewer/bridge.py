@@ -97,12 +97,17 @@ class FlightBridge(QObject):
                     "unit": "m",
                     "note": "",
                 },
-                {"title": "Altitude Gain", "value": str(s.gain), "unit": "m", "note": ""},
+                {
+                    "title": "Altitude Gain",
+                    "value": str(s.gain),
+                    "unit": "m",
+                    "note": "altitude gain from takeoff",
+                },
                 {
                     "title": "Max Speed",
                     "value": f"{s.max_speed:.1f}",
                     "unit": "km/h",
-                    "note": "GPS · estimated",
+                    "note": "estimated",
                 },
                 {
                     "title": "Max Climb",
@@ -111,8 +116,20 @@ class FlightBridge(QObject):
                     "note": "",
                 },
                 {
-                    "title": "Avg Thermal",
+                    "title": "Avg. Thermal",
                     "value": f"{s.avg_thermal_climb:.1f}",
+                    "unit": "m/s",
+                    "note": "",
+                },
+                {
+                    "title": "Takeoff Altitude",
+                    "value": str(self._flight.points[0].alt),
+                    "unit": "m",
+                    "note": "",
+                },
+                {
+                    "title": "Max Sink",
+                    "value": f"{s.max_sink:.1f}",
                     "unit": "m/s",
                     "note": "",
                 },

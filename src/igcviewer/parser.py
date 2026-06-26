@@ -133,7 +133,7 @@ def parse_igc(path: str) -> FlightData:
             stats.avg_thermal_climb = sum(thermals) / len(thermals)
 
     stats.flight_dist = cum_dist / 1000.0
-    stats.gain = max(0, stats.max_alt - stats.min_alt)
+    stats.gain = max(0, stats.max_alt - data.points[0].alt)
     stats.point_count = len(data.points)
     data.valid = True
     return data
