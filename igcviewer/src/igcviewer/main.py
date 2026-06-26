@@ -1,3 +1,4 @@
+import signal
 import sys
 from pathlib import Path
 
@@ -9,6 +10,11 @@ from .bridge import FlightBridge
 
 
 def main() -> None:
+    # Restore the default SIGINT handler so Ctrl+C from a terminal terminates
+    # the process. Qt replaces it with SIG_IGN, which causes the signal to be
+    # silently swallowed while the event loop runs.
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     app = QGuiApplication(sys.argv)
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")
