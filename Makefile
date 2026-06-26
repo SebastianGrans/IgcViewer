@@ -44,7 +44,7 @@ $(QML_DIR)/igcviewer.qmltypes: $(BRIDGE_PY)
 	uv run pyside6-qmltyperegistrar \
 		--generate-qmltypes $(QML_DIR)/igcviewer.qmltypes \
 		--import-name igcviewer --major-version 1 --minor-version 0 \
-		$(QML_DIR)/bridge.json
+		$(QML_DIR)/bridge.json > /dev/null
 	rm -f $(QML_DIR)/bridge.json
 	$(done)
 
