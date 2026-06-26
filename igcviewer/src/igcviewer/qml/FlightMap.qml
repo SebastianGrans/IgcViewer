@@ -6,6 +6,7 @@ Item {
     id: root
 
     property bool maximized: false
+    property bool fitted: false
     signal toggleMaximize
 
     // Placeholder shown before a file is loaded
@@ -13,7 +14,11 @@ Item {
         anchors.fill: parent
         color: Theme.surfaceLow
         radius: 6
-        visible: !bridge.hasData
+        // We defer showing the map until the flight data is loaded and the map
+        // has been fitted to the flight track.
+        // This prevents briefly showing the map centered around London, before the viewport is
+        // adjusted to the flight track.
+        visible: !flightMap.visible
 
         Text {
             anchors.centerIn: parent
@@ -26,7 +31,7 @@ Item {
     Map {
         id: flightMap
         anchors.fill: parent
-        visible: bridge.hasData
+        visible: bridge.hasData && root.fitted
         copyrightsVisible: false
 
         plugin: Plugin {
@@ -97,17 +102,35 @@ Item {
             }
         }
 
+        Timer {
+            // NOTE: Without this, there were cases where setting the map bounding box would fail.
+            // Sometimes it would only show the world map, other times it would show a small section of the
+            // flight path.
+            // This delays setting the map bounding box to mitigate that.
+            //
+            // TODO: Figure out the root cause.
+            id: fitTimer
+            interval: 40
+            repeat: false
+            onTriggered: {
+                var b = bridge.trackBounds;
+                flightMap.fitViewportToGeoShape(b, 20);
+                root.fitted = true;
+            }
+        }
+
         Connections {
             target: bridge
             function onFlightLoaded() {
-                Qt.callLater(function () {
-                    if (flightMap.mapReady)
-                        flightMap.fitViewportToMapItems();
-                    else
-                        flightMap.mapReadyChanged.connect(function () {
-                            flightMap.fitViewportToMapItems();
-                        });
-                });
+                root.fitted = false;
+                if (flightMap.mapReady) {
+                    fitTimer.restart();
+                } else {
+                    flightMap.mapReadyChanged.connect(function () {
+                        flightMap.mapReadyChanged.disconnect(conn);
+                        fitTimer.restart();
+                    });
+                }
             }
         }
     }

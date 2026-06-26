@@ -1,7 +1,7 @@
 import json
 
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot
-from PySide6.QtPositioning import QGeoCoordinate
+from PySide6.QtPositioning import QGeoCoordinate, QGeoRectangle
 
 from .models import FlightData
 from .parser import parse_igc
@@ -86,6 +86,14 @@ class FlightBridge(QObject):
     @Property(list, notify=flightLoaded)
     def trackCoordinates(self) -> list:
         return [QGeoCoordinate(p.lat, p.lon) for p in self._flight.points]
+
+    @Property(QGeoRectangle, notify=flightLoaded)
+    def trackBounds(self) -> QGeoRectangle:
+        if not self._flight.valid:
+            return QGeoRectangle()
+        lats = [p.lat for p in self._flight.points]
+        lons = [p.lon for p in self._flight.points]
+        return QGeoRectangle(QGeoCoordinate(max(lats), min(lons)), QGeoCoordinate(min(lats), max(lons)))
 
     @Property(QGeoCoordinate, notify=flightLoaded)
     def startCoordinate(self) -> QGeoCoordinate:
