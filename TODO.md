@@ -21,3 +21,11 @@ accordingly.
 
 If the flight path is outside the map area, and then you maximize the map (or the window), the path
 is not redraw, and the path outside the original map area is not shown.
+
+## Add a switch for tile type
+
+I think the plugin has support for sattelite images etc.
+
+## Add ability to store light/dark mode preference
+
+title
