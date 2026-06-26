@@ -100,10 +100,13 @@ Item {
         Connections {
             target: bridge
             function onFlightLoaded() {
-                // Defer one frame so the polyline path is committed before
-                // fitting the viewport to it.
                 Qt.callLater(function () {
-                    flightMap.fitViewportToMapItems();
+                    if (flightMap.mapReady)
+                        flightMap.fitViewportToMapItems();
+                    else
+                        flightMap.mapReadyChanged.connect(function () {
+                            flightMap.fitViewportToMapItems();
+                        });
                 });
             }
         }
