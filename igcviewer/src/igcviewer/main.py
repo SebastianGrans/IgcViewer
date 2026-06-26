@@ -1,4 +1,5 @@
 import argparse
+import logging
 import signal
 import sys
 from pathlib import Path
@@ -6,16 +7,45 @@ from pathlib import Path
 from PySide6.QtCore import QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
+from rich.logging import RichHandler
+
 
 from .bridge import FlightBridge
 
+log = logging.getLogger(__name__)
+
+
+def arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="IGC Flight Viewer")
+    parser.add_argument(
+        "igc_file",
+        nargs="?",
+        metavar="FILE",
+        help="IGC file to open on startup",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose logging",
+    )
+    return parser
+
 
 def main() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler(rich_tracebacks=True)],
+    )
+
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    parser = argparse.ArgumentParser(description="IGC Flight Viewer")
-    parser.add_argument("igc_file", nargs="?", metavar="FILE", help="IGC file to open on startup")
-    args, qt_args = parser.parse_known_args()
+    args, qt_args = arg_parser().parse_known_args()
+
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
 
     app = QGuiApplication([sys.argv[0]] + qt_args)
     app.setApplicationName("IGC Flight Viewer")
