@@ -138,17 +138,18 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: function (mouse) {
+
+        function updateHighlight(mouseX) {
             var dists = root.distances;
             if (dists.length < 2)
                 return;
             var pad = 42;
             var plotW = root.width - 2 * pad;
-            if (mouse.x < pad || mouse.x > pad + plotW) {
+            if (mouseX < pad || mouseX > pad + plotW) {
                 FlightBridge.setHighlight(-1);
                 return;
             }
-            var clickDist = ((mouse.x - pad) / plotW) * root._maxDist;
+            var clickDist = ((mouseX - pad) / plotW) * root._maxDist;
             var bestIdx = 0;
             var bestDiff = Math.abs(dists[0] - clickDist);
             for (var i = 1; i < dists.length; i++) {
@@ -160,5 +161,8 @@ Item {
             }
             FlightBridge.setHighlight(bestIdx);
         }
+
+        onClicked: mouse => updateHighlight(mouse.x)
+        onPositionChanged: mouse => updateHighlight(mouse.x)
     }
 }
