@@ -74,7 +74,7 @@ ApplicationWindow {
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             //Layout.topMargin: bridge.hasData ? 8 : 0
-            height: bridge.hasData ? 1 : 0
+            implicitHeight: bridge.hasData ? 1 : 0
             color: Theme.divider
             visible: !root.mapMaximized
         }
@@ -101,14 +101,15 @@ ApplicationWindow {
             spacing: 10
             visible: !root.mapMaximized
             Button {
+                id: loadBtn
                 text: "📁  Load IGC File"
                 onClicked: fileDialog.open()
                 background: Rectangle {
-                    color: parent.pressed ? "#1e3a5f" : (parent.hovered ? "#1e40af" : "#1d4ed8")
+                    color: loadBtn.pressed ? "#1e3a5f" : (loadBtn.hovered ? "#1e40af" : "#1d4ed8")
                     radius: 6
                 }
                 contentItem: Text {
-                    text: parent.text
+                    text: loadBtn.text
                     color: "#f1f5f9"
                     font.pointSize: 10
                     horizontalAlignment: Text.AlignHCenter
@@ -123,8 +124,8 @@ ApplicationWindow {
                 elide: Text.ElideRight
             }
             Rectangle {
-                height: 26
-                width: 84
+                implicitHeight: 26
+                implicitWidth: 84
                 radius: 5
                 clip: true
                 border.color: Theme.divider
@@ -136,31 +137,43 @@ ApplicationWindow {
 
                     Repeater {
                         model: [
-                            { icon: "☀", mode: "light" },
-                            { icon: "⊙", mode: "system" },
-                            { icon: "☾", mode: "dark" }
+                            {
+                                icon: "☀",
+                                mode: "light"
+                            },
+                            {
+                                icon: "⊙",
+                                mode: "system"
+                            },
+                            {
+                                icon: "☾",
+                                mode: "dark"
+                            }
                         ]
 
                         delegate: Rectangle {
+                            id: modeDelegate
                             required property var modelData
                             required property int index
-                            width: 28
-                            height: 26
-                            color: Theme.mode === modelData.mode
-                                ? "#1d4ed8"
-                                : (modeArea.containsMouse ? Theme.divider : "transparent")
+                            implicitWidth: 28
+                            implicitHeight: 26
+                            color: Theme.mode === modeDelegate.modelData.mode ? "#1d4ed8" : (modeArea.containsMouse ? Theme.divider : "transparent")
 
                             Rectangle {
-                                visible: index > 0
-                                anchors { top: parent.top; bottom: parent.bottom; left: parent.left }
+                                visible: modeDelegate.index > 0
+                                anchors {
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                    left: parent.left
+                                }
                                 width: 1
                                 color: Theme.divider
                             }
 
                             Text {
                                 anchors.centerIn: parent
-                                text: modelData.icon
-                                color: Theme.mode === modelData.mode ? "#f1f5f9" : Theme.textMuted
+                                text: modeDelegate.modelData.icon
+                                color: Theme.mode === modeDelegate.modelData.mode ? "#f1f5f9" : Theme.textMuted
                                 font.pixelSize: 13
                             }
 
@@ -169,7 +182,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Theme.mode = modelData.mode
+                                onClicked: Theme.mode = modeDelegate.modelData.mode
                             }
                         }
                     }
@@ -182,7 +195,7 @@ ApplicationWindow {
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.topMargin: 6
-            height: 1
+            implicitHeight: 1
             color: Theme.divider
             visible: !root.mapMaximized
         }

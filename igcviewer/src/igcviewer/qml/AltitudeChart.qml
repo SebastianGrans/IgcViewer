@@ -24,7 +24,9 @@ Item {
 
     Connections {
         target: Theme
-        function onIsDarkChanged() { canvas.requestPaint() }
+        function onIsDarkChanged() {
+            canvas.requestPaint();
+        }
     }
 
     Canvas {
