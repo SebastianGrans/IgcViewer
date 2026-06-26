@@ -1,46 +1,65 @@
-QML_DIR = src/igcviewer/qml
+QML_DIR   = src/igcviewer/qml
 BRIDGE_PY = src/igcviewer/bridge.py
 
-.PHONY: help lint check stubs qmllint run
+CYAN  = \033[36m
+GREEN = \033[32m
+RED   = \033[31m
+BOLD  = \033[1m
+RESET = \033[0m
+
+
+define printstart
+@printf "$(CYAN)### $(1) ###$(RESET)\n"
+endef
+
+# NOTE: The hashtags need to be escaped to prevent make from thinking they are comments...
+done = @printf "$(GREEN)\#\#\# DONE! \#\#\#$(RESET)\n\n"
+
+
+
+.PHONY: help lint check stubs qmllint lintall run
 
 help:
-	@echo "lint     - run ruff check --fix and ruff format"
-	@echo "check    - run ruff check and ty (read-only)"
-	@echo "stubs    - regenerate QML type stubs from bridge.py"
-	@echo "qmllint  - lint all QML files (regenerates stubs first if needed)"
-	@echo "run      - launch the app"
+	@printf "$(BOLD)lint$(RESET)     - run ruff check --fix and ruff format\n"
+	@printf "$(BOLD)check$(RESET)    - run ruff check and ty (read-only)\n"
+	@printf "$(BOLD)stubs$(RESET)    - regenerate QML type stubs from bridge.py\n"
+	@printf "$(BOLD)qmllint$(RESET)  - lint all QML files (regenerates stubs first if needed)\n"
+	@printf "$(BOLD)run$(RESET)      - launch the app\n"
 
 lint:
-	@echo "### Running ruff check --fix and format... ###"
+	$(call printstart,Running ruff check --fix and format...)
 	uv run ruff check --fix src/
 	uv run ruff format src/
-	@echo "### DONE! ###"
+	$(done)
 
 check:
-	@echo "### Running `ruff check` and `ty check`... ###"
+	$(call printstart,Running 'ruff check' and 'ty check'...)
 	uv run ruff check src/
 	uv run ty check
-	@echo "### DONE! ###"
+	$(done)
 
 $(QML_DIR)/igcviewer.qmltypes: $(BRIDGE_PY)
-	@echo "### `bridge.py` has changed. Rebuilding `.qmltypes`... ###"
+	@printf "$(CYAN)### bridge.py has changed. Rebuilding .qmltypes... ###$(RESET)\n"
 	uv run pyside6-metaobjectdump $(BRIDGE_PY) --out-file $(QML_DIR)/bridge.json
 	uv run pyside6-qmltyperegistrar \
 		--generate-qmltypes $(QML_DIR)/igcviewer.qmltypes \
 		--import-name igcviewer --major-version 1 --minor-version 0 \
 		$(QML_DIR)/bridge.json
-	
 	rm -f $(QML_DIR)/bridge.json
-	@echo ""
-	@echo "### DONE! ###"
+	$(done)
 
 stubs: $(QML_DIR)/igcviewer.qmltypes
 
 qmllint: stubs
-	@echo "### Running linter on qml files... ###"
+	@printf "$(CYAN)### Running linter on QML files... ###$(RESET)\n"
 	uv run pyside6-qmllint -I $(QML_DIR) $(QML_DIR)/*.qml
-	@echo "### Done! ###"
-lintall: qmllint lint check
+	$(done)
+
+lintall:
+	@$(MAKE) --no-print-directory qmllint || (printf "\n$(RED)$(BOLD)### FAILED: qmllint ###$(RESET)\n" && exit 1)
+	@$(MAKE) --no-print-directory lint    || (printf "\n$(RED)$(BOLD)### FAILED: lint ###$(RESET)\n"    && exit 1)
+	@$(MAKE) --no-print-directory check   || (printf "\n$(RED)$(BOLD)### FAILED: check ###$(RESET)\n"   && exit 1)
+	@printf "\n$(GREEN)$(BOLD)### ALL CHECKS PASSED! ###$(RESET)\n"
 
 run:
 	uv run igcviewer
