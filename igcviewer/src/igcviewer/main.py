@@ -1,3 +1,4 @@
+import argparse
 import signal
 import sys
 from pathlib import Path
@@ -10,12 +11,13 @@ from .bridge import FlightBridge
 
 
 def main() -> None:
-    # Restore the default SIGINT handler so Ctrl+C from a terminal terminates
-    # the process. Qt replaces it with SIG_IGN, which causes the signal to be
-    # silently swallowed while the event loop runs.
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-    app = QGuiApplication(sys.argv)
+    parser = argparse.ArgumentParser(description="IGC Flight Viewer")
+    parser.add_argument("igc_file", nargs="?", metavar="FILE", help="IGC file to open on startup")
+    args, qt_args = parser.parse_known_args()
+
+    app = QGuiApplication([sys.argv[0]] + qt_args)
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")
 
@@ -29,6 +31,13 @@ def main() -> None:
 
     if not engine.rootObjects():
         sys.exit(1)
+
+    if args.igc_file:
+        if not Path(args.igc_file).exists():
+            # Show an error message in the GUI
+            bridge.flightError.emit(f"File not found: {args.igc_file}")
+        else:
+            bridge.loadFile(args.igc_file)
 
     sys.exit(app.exec())
 
