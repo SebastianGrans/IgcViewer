@@ -51,7 +51,7 @@ Item {
 
             // Compute range (avoid spread operator on large arrays)
             var minAlt = alts[0], maxAlt = alts[0];
-            for (var i = 1; i < alts.length; i++) {
+            for (let i = 1; i < alts.length; i++) {
                 if (alts[i] < minAlt)
                     minAlt = alts[i];
                 if (alts[i] > maxAlt)
@@ -68,8 +68,8 @@ Item {
             ctx.strokeStyle = Theme.chartGrid.toString();
             ctx.globalAlpha = 0.6;
             ctx.lineWidth = 0.5;
-            for (var gi = 0; gi <= 4; gi++) {
-                var gy = pad + plotH - gi * plotH / 4;
+            for (let gi = 0; gi <= 4; gi++) {
+                let gy = pad + plotH - gi * plotH / 4;
                 ctx.beginPath();
                 ctx.moveTo(pad, gy);
                 ctx.lineTo(pad + plotW, gy);
@@ -81,9 +81,9 @@ Item {
             ctx.strokeStyle = Theme.chartLine.toString();
             ctx.lineWidth = 2;
             ctx.beginPath();
-            for (var pi = 0; pi < alts.length; pi++) {
-                var px = pad + (dists[pi] / maxDist) * plotW;
-                var py = pad + plotH - ((alts[pi] - minAlt) / altRange) * plotH;
+            for (let pi = 0; pi < alts.length; pi++) {
+                let px = pad + (dists[pi] / maxDist) * plotW;
+                let py = pad + plotH - ((alts[pi] - minAlt) / altRange) * plotH;
                 if (pi === 0)
                     ctx.moveTo(px, py);
                 else
@@ -94,8 +94,8 @@ Item {
             // Highlight
             var hi = FlightBridge.highlightedIndex;
             if (hi >= 0 && hi < alts.length) {
-                var hx = pad + (dists[hi] / maxDist) * plotW;
-                var hy = pad + plotH - ((alts[hi] - minAlt) / altRange) * plotH;
+                let hx = pad + (dists[hi] / maxDist) * plotW;
+                let hy = pad + plotH - ((alts[hi] - minAlt) / altRange) * plotH;
 
                 // Vertical guide line
                 ctx.strokeStyle = "rgba(245, 158, 11, 0.5)";
@@ -121,16 +121,16 @@ Item {
             // Y-axis labels
             ctx.fillStyle = Theme.chartLabel.toString();
             ctx.font = "10px sans-serif";
-            for (var yi = 0; yi <= 4; yi++) {
-                var yVal = Math.round(minAlt + yi * altRange / 4);
-                var yPos = pad + plotH - yi * plotH / 4;
+            for (let yi = 0; yi <= 4; yi++) {
+                let yVal = Math.round(minAlt + yi * altRange / 4);
+                let yPos = pad + plotH - yi * plotH / 4;
                 ctx.fillText(yVal + "m", 3, yPos + 4);
             }
 
             // X-axis labels
-            for (var xi = 0; xi <= 4; xi++) {
-                var xVal = (xi * maxDist / 4).toFixed(1);
-                var xPos = pad + xi * plotW / 4;
+            for (let xi = 0; xi <= 4; xi++) {
+                let xVal = (xi * maxDist / 4).toFixed(1);
+                let xPos = pad + xi * plotW / 4;
                 ctx.fillText(xVal + "km", xPos - 14, h - 6);
             }
         }
@@ -152,8 +152,8 @@ Item {
             var clickDist = ((mouseX - pad) / plotW) * root._maxDist;
             var bestIdx = 0;
             var bestDiff = Math.abs(dists[0] - clickDist);
-            for (var i = 1; i < dists.length; i++) {
-                var diff = Math.abs(dists[i] - clickDist);
+            for (let i = 1; i < dists.length; i++) {
+                let diff = Math.abs(dists[i] - clickDist);
                 if (diff < bestDiff) {
                     bestDiff = diff;
                     bestIdx = i;
