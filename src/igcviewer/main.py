@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import signal
 import sys
 from pathlib import Path
@@ -30,6 +31,15 @@ def arg_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _maptiler_key() -> str:
+    if key := os.environ.get("MAPTILER_KEY"):
+        return key
+    key_file = Path(".vscode/key.txt")
+    if key_file.exists():
+        return key_file.read_text().strip()
+    return ""
+
+
 def main() -> None:
     logging.basicConfig(
         level=logging.INFO,
@@ -48,6 +58,8 @@ def main() -> None:
     app = QGuiApplication([sys.argv[0]] + qt_args)
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")
+
+    FlightBridge._maptiler_key = _maptiler_key()
 
     engine = QQmlApplicationEngine()
     engine.addImportPath(str(Path(__file__).parent))

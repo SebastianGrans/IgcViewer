@@ -7,6 +7,7 @@ Item {
 
     property bool maximized: false
     property bool fitted: false
+    property bool satelliteMode: false
     signal toggleMaximize
 
     // Placeholder shown before a file is loaded
@@ -40,6 +41,10 @@ Item {
             PluginParameter {
                 name: "osm.mapping.providersrepository.disabled"
                 value: "true"
+            }
+            PluginParameter {
+                name: "osm.mapping.custom.host"
+                value: "https://api.maptiler.com/tiles/satellite-v2/%z/%x/%y.png?key=" + FlightBridge.maptilerKey
             }
         }
     }
@@ -107,6 +112,21 @@ Item {
         }
     }
 
+    function applyMapType() {
+        if (!flightMapView.map.mapReady)
+            return;
+        const types = flightMapView.map.supportedMapTypes;
+        for (let i = 0; i < types.length; i++) {
+            const isCustom = types[i].style === MapType.CustomMap;
+            if (root.satelliteMode === isCustom) {
+                flightMapView.map.activeMapType = types[i];
+                return;
+            }
+        }
+    }
+
+    onSatelliteModeChanged: applyMapType()
+
     Component.onCompleted: {
         flightMapView.map.addMapItem(trackPolyline);
         flightMapView.map.addMapItem(startMarker);
@@ -128,6 +148,7 @@ Item {
             var b = FlightBridge.trackBounds;
             flightMapView.map.fitViewportToGeoShape(b, 20);
             root.fitted = true;
+            root.applyMapType();
         }
     }
 
@@ -144,6 +165,37 @@ Item {
                 };
                 flightMapView.map.mapReadyChanged.connect(onReady);
             }
+        }
+    }
+
+    // Satellite toggle button — switches between street map and Maptiler satellite imagery
+    Rectangle {
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 8
+            rightMargin: 84
+        }
+        width: 30
+        height: 30
+        radius: 5
+        visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+        color: root.satelliteMode ? "#0369a1" : (satHover.containsMouse ? "#2563eb" : "#1d4ed8")
+        z: 10
+
+        Text {
+            anchors.centerIn: parent
+            text: "Sat"
+            color: "#f1f5f9"
+            font.pixelSize: 10
+        }
+
+        MouseArea {
+            id: satHover
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.satelliteMode = !root.satelliteMode
         }
     }
 
@@ -205,6 +257,61 @@ Item {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             onClicked: root.toggleMaximize()
+        }
+    }
+
+    // Maptiler attribution — required by the free tier when satellite tiles are active
+    Rectangle {
+        visible: root.satelliteMode
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            bottomMargin: 4
+            leftMargin: 4
+        }
+        z: 10
+        color: "#ccffffff"
+        radius: 3
+        width: attributionRow.width + 8
+        height: attributionRow.height + 6
+
+        Row {
+            id: attributionRow
+            anchors.centerIn: parent
+            spacing: 6
+
+            Image {
+                source: "https://api.maptiler.com/resources/logo.svg"
+                height: 16
+                fillMode: Image.PreserveAspectFit
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Qt.openUrlExternally("https://www.maptiler.com/")
+                }
+            }
+
+            Text {
+                text: "© MapTiler"
+                font.pixelSize: 11
+                color: "#333"
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Qt.openUrlExternally("https://maptiler.com/copyright")
+                }
+            }
+
+            Text {
+                text: "© OpenStreetMap contributors"
+                font.pixelSize: 11
+                color: "#333"
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Qt.openUrlExternally("https://www.openstreetmap.org/copyright")
+                }
+            }
         }
     }
 }

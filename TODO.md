@@ -1,8 +1,12 @@
 # TODOs
 
-## Add a switch for tile type
+## Add Cesium 3D view from maptiler
 
-I think the plugin has support for sattelite images etc.
+https://cloud.maptiler.com/tiles/terrain-quantized-mesh-v2/
+
+## Handle maptiler API key somehow
+
+Currently not part of the repo. Maybe github secrets + CI build with nuitka?
 
 ## Add ability to store light/dark mode preference
 

@@ -96,6 +96,14 @@ Module {
             index: 9
             isReadonly: true
         }
+        Property {
+            name: "maptilerKey"
+            type: "QString"
+            read: "maptilerKey"
+            index: 10
+            isReadonly: true
+            isConstant: true
+        }
         Signal { name: "flightLoaded" }
         Signal {
             name: "flightError"

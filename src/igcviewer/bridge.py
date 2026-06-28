@@ -37,6 +37,7 @@ class FlightBridge(QObject):
     highlightChanged = Signal(int)
 
     _instance: ClassVar[FlightBridge | None] = None
+    _maptiler_key: ClassVar[str] = ""
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -49,6 +50,10 @@ class FlightBridge(QObject):
         if cls._instance is None:
             raise RuntimeError("FlightBridge singleton not yet created")
         return cls._instance
+
+    @Property(str, constant=True)
+    def maptilerKey(self) -> str:
+        return FlightBridge._maptiler_key
 
     # ------------------------------------------------------------------ slots
 
