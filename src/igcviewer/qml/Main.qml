@@ -30,6 +30,13 @@ ApplicationWindow {
     }
 
     Shortcut {
+        sequences: [StandardKey.Quit]
+        context: Qt.ApplicationShortcut
+
+        onActivated: Qt.quit()
+    }
+
+    Shortcut {
         sequences: [StandardKey.ZoomIn]
         context: Qt.ApplicationShortcut
         onActivated: Theme.fontScale = Math.min(2.0, Theme.fontScale + 0.1)
