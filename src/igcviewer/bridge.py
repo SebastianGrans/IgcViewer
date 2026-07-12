@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 import json
 from typing import ClassVar, TypeVar
@@ -10,6 +11,9 @@ from PySide6.QtQml import QmlSingleton as _QmlSingleton
 
 from .models import FlightData
 from .parser import parse_igc
+
+log = logging.getLogger(__name__)
+
 
 # The type stubs for QmlElement and QmlSingleton are
 # def QmlElement(arg__1: object, /) -> object: ...
@@ -53,12 +57,14 @@ class FlightBridge(QObject):
 
     @Property(str, constant=True)
     def maptilerKey(self) -> str:
+        log.debug("Maptiler API key loaded.")
         return FlightBridge._maptiler_key
 
     # ------------------------------------------------------------------ slots
 
     @Slot(str)
     def loadFile(self, path: str) -> None:
+        log.debug(f"Loading IGC file: {path}")
         local = QUrl(path).toLocalFile() or path
         flight = parse_igc(local)
         if not flight.valid:
@@ -172,23 +178,23 @@ class FlightBridge(QObject):
             QGeoCoordinate(max(lats), min(lons)), QGeoCoordinate(min(lats), max(lons))
         )
 
-    @Property(QGeoCoordinate, notify=flightLoaded)
-    def startCoordinate(self) -> QGeoCoordinate:
+    def getCoordinate(self, index: int) -> QGeoCoordinate:
         if not self._flight.valid:
             return QGeoCoordinate()
-        p = self._flight.points[0]
+
+        p = self._flight.points[index]
         return QGeoCoordinate(p.lat, p.lon)
 
     @Property(QGeoCoordinate, notify=flightLoaded)
+    def startCoordinate(self) -> QGeoCoordinate:
+        return self.getCoordinate(0)
+
+    @Property(QGeoCoordinate, notify=flightLoaded)
     def endCoordinate(self) -> QGeoCoordinate:
-        if not self._flight.valid:
-            return QGeoCoordinate()
-        p = self._flight.points[-1]
-        return QGeoCoordinate(p.lat, p.lon)
+        return self.getCoordinate(-1)
 
     @Property(QGeoCoordinate, notify=highlightChanged)
     def highlightCoordinate(self) -> QGeoCoordinate:
         if self._highlighted_index < 0 or not self._flight.valid:
             return QGeoCoordinate()
-        p = self._flight.points[self._highlighted_index]
-        return QGeoCoordinate(p.lat, p.lon)
+        return self.getCoordinate(self._highlighted_index)
