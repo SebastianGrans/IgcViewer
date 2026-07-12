@@ -173,15 +173,18 @@ ApplicationWindow {
                         model: [
                             {
                                 icon: "☀",
-                                mode: Theme.Mode.Light
+                                mode: Theme.Mode.Light,
+                                label: "Light"
                             },
                             {
                                 icon: "⊙",
-                                mode: Theme.Mode.System
+                                mode: Theme.Mode.System,
+                                label: "Follow system"
                             },
                             {
                                 icon: "☾",
-                                mode: Theme.Mode.Dark
+                                mode: Theme.Mode.Dark,
+                                label: "Dark"
                             }
                         ]
 
@@ -217,6 +220,11 @@ ApplicationWindow {
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: Theme.mode = modeDelegate.modelData.mode
+
+                                AppToolTip {
+                                    visible: modeArea.containsMouse
+                                    text: qsTr(modeDelegate.modelData.label)
+                                }
                             }
                         }
                     }

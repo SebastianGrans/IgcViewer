@@ -201,19 +201,32 @@ Item {
             label: "Sat"
             active: root.satelliteMode
             onClicked: root.satelliteMode = !root.satelliteMode
+            
+            AppToolTip {
+                visible: satHover.containsMouse
+                text: qsTr("Toggle satellite layer")
+            }
         }
-
         MapButton {
             visible: FlightBridge.hasData
             label: "⊙"
             labelPixelSize: 15
             onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
+        
+            AppToolTip {
+                visible: fitHover.containsMouse
+                text: qsTr("Re-center view")
+            }
         }
-
         MapButton {
             label: root.maximized ? "⊟" : "⛶"
             labelPixelSize: 15
             onClicked: root.toggleMaximize()
+
+            AppToolTip {
+                visible: expandHover.containsMouse
+                text: qsTr("Maximize map")
+            }
         }
     }
 
