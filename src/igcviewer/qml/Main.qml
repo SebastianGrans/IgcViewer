@@ -173,15 +173,15 @@ ApplicationWindow {
                         model: [
                             {
                                 icon: "☀",
-                                mode: "light"
+                                mode: Theme.Mode.Light
                             },
                             {
                                 icon: "⊙",
-                                mode: "system"
+                                mode: Theme.Mode.System
                             },
                             {
                                 icon: "☾",
-                                mode: "dark"
+                                mode: Theme.Mode.Dark
                             }
                         ]
 

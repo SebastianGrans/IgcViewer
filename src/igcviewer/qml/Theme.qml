@@ -4,12 +4,14 @@ import QtQuick
 QtObject {
     id: root
 
-    property string mode: "system"
+    enum Mode { Light, System, Dark }
+
+    property int mode: Theme.Mode.System
 
     readonly property bool isDark: {
-        if (mode === "system")
+        if (mode === Theme.Mode.System)
             return Application.styleHints.colorScheme === Qt.ColorScheme.Dark;
-        return mode === "dark";
+        return mode === Theme.Mode.Dark;
     }
 
     readonly property color windowBg: isDark ? "#0a0e17" : "#f1f5f9"
