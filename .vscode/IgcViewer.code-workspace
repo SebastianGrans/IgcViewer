@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"python.languageServer": "None",
+		"ty.diagnosticMode": "workspace",
+		"ty.completions.completeFunctionParentheses": true
+	}
+}

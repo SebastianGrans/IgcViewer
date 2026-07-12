@@ -6,7 +6,6 @@
     "editor.rulers": [
         90
     ],
-    "python.languageServer": "None",
     "[python]": {
         "editor.rulers": [
             90
@@ -15,5 +14,4 @@
         "editor.defaultFormatter": "charliermarsh.ruff",
     },
     "ty.completions.completeFunctionParentheses": true,
-    "ty.diagnosticMode": "workspace",
 }
