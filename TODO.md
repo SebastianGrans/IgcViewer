@@ -5,9 +5,6 @@
 
 Currently not part of the repo. Maybe github secrets + CI build with nuitka?
 
-## Add ability to store light/dark mode preference
-
-title
 
 ## Change hight profile x axis
 
@@ -15,7 +12,17 @@ E.g. time instead of distance.
 
 ## Enable clicking on the flight path on the map
 
-and tooltips?
+and tooltips when hovering
+
+## Loading multiple flightlogs
+
+Display them as a list. Clicking them should should display it. If multiple files are loaded, the
+first file should be displayed by default
+
+## "Plugin" system
+
+Add a plugin system somehow, such that you can upload a tracklog to a website such as flightlog.org
+or xcontext
 
 ## Add ability to replay flight
 

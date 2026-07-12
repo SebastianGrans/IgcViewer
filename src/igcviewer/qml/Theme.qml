@@ -1,12 +1,22 @@
 pragma Singleton
 import QtQuick
+import QtCore
 
 QtObject {
     id: root
 
-    enum Mode { Light, System, Dark }
+    enum Mode {
+        Light,
+        System,
+        Dark
+    }
 
     property int mode: Theme.Mode.System
+
+    property Settings settings: Settings {
+        category: "appearance"
+        property alias mode: root.mode
+    }
 
     readonly property bool isDark: {
         if (mode === Theme.Mode.System)
