@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import QtLocation
 import QtPositioning
 
@@ -177,58 +178,43 @@ Item {
         }
     }
 
-    // Open 3D Cesium globe in a separate window
-    MapButton {
-        anchors {
-            top: parent.top
-            right: parent.right
-            topMargin: 8
-            rightMargin: 122
-        }
-        visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
-        label: "3D"
-        onClicked: root.openCesiumWindow()
-    }
-
-    // Satellite toggle button — switches between street map and Maptiler satellite imagery
-    MapButton {
-        anchors {
-            top: parent.top
-            right: parent.right
-            topMargin: 8
-            rightMargin: 84
-        }
-        visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
-        label: "Sat"
-        active: root.satelliteMode
-        onClicked: root.satelliteMode = !root.satelliteMode
-    }
-
-    // Fit-to-track button — snaps viewport back to the flight path
-    MapButton {
-        anchors {
-            top: parent.top
-            right: parent.right
-            topMargin: 8
-            rightMargin: 46
-        }
-        visible: FlightBridge.hasData
-        label: "⊙"
-        labelPixelSize: 15
-        onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
-    }
-
-    // Maximize / restore button — floats in the top-right corner of the map
-    MapButton {
+    // Map toolbar — buttons laid out right-to-left; hidden buttons collapse
+    // automatically instead of leaving a gap (unlike the old fixed-margin approach).
+    RowLayout {
         anchors {
             top: parent.top
             right: parent.right
             topMargin: 8
             rightMargin: 8
         }
-        label: root.maximized ? "⊟" : "⛶"
-        labelPixelSize: 15
-        onClicked: root.toggleMaximize()
+        spacing: 8
+        z: 10
+
+        MapButton {
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+            label: "3D"
+            onClicked: root.openCesiumWindow()
+        }
+
+        MapButton {
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+            label: "Sat"
+            active: root.satelliteMode
+            onClicked: root.satelliteMode = !root.satelliteMode
+        }
+
+        MapButton {
+            visible: FlightBridge.hasData
+            label: "⊙"
+            labelPixelSize: 15
+            onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
+        }
+
+        MapButton {
+            label: root.maximized ? "⊟" : "⛶"
+            labelPixelSize: 15
+            onClicked: root.toggleMaximize()
+        }
     }
 
     // Maptiler attribution — required by the free tier when satellite tiles are active
