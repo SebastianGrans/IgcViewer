@@ -166,7 +166,7 @@ class FlightBridge(QObject):
 
     @Property("QVariantList", notify=flightLoaded)  # ty: ignore[invalid-argument-type]
     def trackCoordinates(self) -> list:
-        return [QGeoCoordinate(p.lat, p.lon) for p in self._flight.points]
+        return [QGeoCoordinate(p.lat, p.lon, p.alt) for p in self._flight.points]
 
     @Property(QGeoRectangle, notify=flightLoaded)
     def trackBounds(self) -> QGeoRectangle:

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <!-- Cesium CDN include — swap these two tags for a vendored copy later if needed -->
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+  <style>
+    html, body, #cesiumContainer { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    let viewer;
+
+    // Called from Qt once the flight track is available (QGeoCoordinate list
+    // as [lon, lat, alt] triples) — kept as a plain global since QML invokes
+    // it via WebEngineView.runJavaScript() after the page finishes loading.
+    window.setFlightPath = function (coords) {
+      if (!viewer || !coords || coords.length === 0)
+        return;
+      const flat = [];
+      for (const [lon, lat, alt] of coords)
+        flat.push(lon, lat, alt);
+
+      const entity = viewer.entities.add({
+        polyline: {
+          positions: Cesium.Cartesian3.fromDegreesArrayHeights(flat),
+          width: 3,
+          material: Cesium.Color.fromCssColorString("#38bdf8"),
+        },
+      });
+      viewer.flyTo(entity, { duration: 1.5 });
+    };
+
+    (async function () {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get("key") || "";
+      const lat = parseFloat(params.get("lat"));
+      const lon = parseFloat(params.get("lon"));
+
+      Cesium.Ion.defaultAccessToken = undefined; // no ion token — avoid default ion-backed assets
+
+      viewer = new Cesium.Viewer("cesiumContainer", {
+        baseLayerPicker: false,
+        geocoder: false,
+        homeButton: false,
+        sceneModePicker: false,
+        navigationHelpButton: false,
+        animation: false,
+        timeline: false,
+        fullscreenButton: false,
+        infoBox: false,
+        selectionIndicator: false,
+      });
+      viewer.imageryLayers.removeAll(); // drop Cesium's default imagery before adding MapTiler's
+
+      if (key) {
+        try {
+          viewer.terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(
+            `https://api.maptiler.com/tiles/terrain-quantized-mesh-v2/?key=${key}`
+          );
+        } catch (e) {
+          console.error("Failed to load MapTiler terrain:", e && e.message ? e.message : e);
+        }
+
+        viewer.imageryLayers.addImageryProvider(
+          new Cesium.UrlTemplateImageryProvider({
+            url: `https://api.maptiler.com/tiles/satellite-v2/{z}/{x}/{y}.png?key=${key}`,
+            credit: "MapTiler",
+          })
+        );
+      }
+
+      if (!isNaN(lat) && !isNaN(lon)) {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(lon, lat, 15000),
+          duration: 2,
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

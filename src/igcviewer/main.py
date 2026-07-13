@@ -7,6 +7,7 @@ from pathlib import Path
 
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtWebEngineQuick import QtWebEngineQuick
 from rich.logging import RichHandler
 
 from .bridge import FlightBridge
@@ -55,6 +56,7 @@ def main() -> None:
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
+    QtWebEngineQuick.initialize()
     app = QGuiApplication([sys.argv[0]] + qt_args)
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")

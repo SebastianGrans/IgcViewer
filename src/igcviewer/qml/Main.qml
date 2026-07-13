@@ -52,6 +52,17 @@ ApplicationWindow {
         onActivated: Theme.fontScale = 1.0
     }
 
+    Component {
+        id: cesiumWindowComponent
+        CesiumWindow {}
+    }
+
+    Shortcut {
+        sequence: "3"
+        context: Qt.ApplicationShortcut
+        onActivated: cesiumWindowComponent.createObject(root)
+    }
+
     Connections {
         target: FlightBridge
         function onFlightError(msg) {
