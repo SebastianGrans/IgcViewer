@@ -178,126 +178,57 @@ Item {
     }
 
     // Open 3D Cesium globe in a separate window
-    Rectangle {
+    MapButton {
         anchors {
             top: parent.top
             right: parent.right
             topMargin: 8
             rightMargin: 122
         }
-        width: 30
-        height: 30
-        radius: 5
         visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
-        color: cesiumHover.containsMouse ? "#2563eb" : "#1d4ed8"
-        z: 10
-
-        Text {
-            anchors.centerIn: parent
-            text: "3D"
-            color: "#f1f5f9"
-            font.pixelSize: 10
-        }
-
-        MouseArea {
-            id: cesiumHover
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.openCesiumWindow()
-        }
+        label: "3D"
+        onClicked: root.openCesiumWindow()
     }
 
     // Satellite toggle button — switches between street map and Maptiler satellite imagery
-    Rectangle {
+    MapButton {
         anchors {
             top: parent.top
             right: parent.right
             topMargin: 8
             rightMargin: 84
         }
-        width: 30
-        height: 30
-        radius: 5
         visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
-        color: root.satelliteMode ? "#0369a1" : (satHover.containsMouse ? "#2563eb" : "#1d4ed8")
-        z: 10
-
-        Text {
-            anchors.centerIn: parent
-            text: "Sat"
-            color: "#f1f5f9"
-            font.pixelSize: 10
-        }
-
-        MouseArea {
-            id: satHover
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.satelliteMode = !root.satelliteMode
-        }
+        label: "Sat"
+        active: root.satelliteMode
+        onClicked: root.satelliteMode = !root.satelliteMode
     }
 
     // Fit-to-track button — snaps viewport back to the flight path
-    Rectangle {
+    MapButton {
         anchors {
             top: parent.top
             right: parent.right
             topMargin: 8
             rightMargin: 46
         }
-        width: 30
-        height: 30
-        radius: 5
         visible: FlightBridge.hasData
-        color: fitHover.containsMouse ? "#2563eb" : "#1d4ed8"
-        z: 10
-
-        Text {
-            anchors.centerIn: parent
-            text: "⊙"
-            color: "#f1f5f9"
-            font.pixelSize: 15
-        }
-
-        MouseArea {
-            id: fitHover
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
-        }
+        label: "⊙"
+        labelPixelSize: 15
+        onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
     }
 
     // Maximize / restore button — floats in the top-right corner of the map
-    Rectangle {
+    MapButton {
         anchors {
             top: parent.top
             right: parent.right
             topMargin: 8
             rightMargin: 8
         }
-        width: 30
-        height: 30
-        radius: 5
-        color: expandHover.containsMouse ? "#2563eb" : "#1d4ed8"
-        z: 10
-
-        Text {
-            anchors.centerIn: parent
-            text: root.maximized ? "⊟" : "⛶"
-            color: "#f1f5f9"
-            font.pixelSize: 15
-        }
-
-        MouseArea {
-            id: expandHover
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.toggleMaximize()
-        }
+        label: root.maximized ? "⊟" : "⛶"
+        labelPixelSize: 15
+        onClicked: root.toggleMaximize()
     }
 
     // Maptiler attribution — required by the free tier when satellite tiles are active
