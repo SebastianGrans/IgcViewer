@@ -1,3 +1,4 @@
+from PySide6.QtCore import QMetaObject
 import argparse
 import logging
 import os
@@ -28,6 +29,12 @@ def arg_parser() -> argparse.ArgumentParser:
         "--verbose",
         action="store_true",
         help="Enable verbose logging",
+    )
+    parser.add_argument(
+        "-3d",
+        dest="three_d",
+        action="store_true",
+        help="Open 3D view on startup",
     )
     return parser
 
@@ -76,6 +83,9 @@ def main() -> None:
             bridge.flightError.emit(f"File not found: {args.igc_file}")
         else:
             bridge.loadFile(args.igc_file)
+
+    if args.three_d:
+        QMetaObject.invokeMethod(engine.rootObjects()[0], "openCesiumWindow")
 
     ret = app.exec()
     # Destroy the QML engine before the singleton goes out of scope, otherwise

@@ -52,15 +52,14 @@ ApplicationWindow {
         onActivated: Theme.fontScale = 1.0
     }
 
-    Component {
-        id: cesiumWindowComponent
-        CesiumWindow {}
-    }
-
     Shortcut {
         sequence: "3"
         context: Qt.ApplicationShortcut
-        onActivated: cesiumWindowComponent.createObject(root)
+        onActivated: flightMap.openCesiumWindow()
+    }
+
+    function openCesiumWindow() {
+        flightMap.openCesiumWindow();
     }
 
     Connections {
@@ -115,6 +114,7 @@ ApplicationWindow {
 
         // map — grows to fill all remaining space
         FlightMap {
+            id: flightMap
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumHeight: 150

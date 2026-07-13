@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8" />
-  <!-- Cesium CDN include — swap these two tags for a vendored copy later if needed -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
   <link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
   <style>
-    html, body, #cesiumContainer { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+    html,
+    body,
+    #cesiumContainer {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
   </style>
 </head>
+
 <body>
   <div id="cesiumContainer"></div>
   <script>
@@ -32,6 +41,7 @@
         },
       });
       viewer.flyTo(entity, { duration: 1.5 });
+      // viewer.zoomTo(entity);
     };
 
     (async function () {
@@ -74,12 +84,13 @@
       }
 
       if (!isNaN(lat) && !isNaN(lon)) {
-        viewer.camera.flyTo({
+        viewer.camera.setView({
           destination: Cesium.Cartesian3.fromDegrees(lon, lat, 15000),
-          duration: 2,
         });
       }
+
     })();
   </script>
 </body>
+
 </html>

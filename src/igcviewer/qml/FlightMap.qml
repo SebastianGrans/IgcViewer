@@ -112,6 +112,15 @@ Item {
         }
     }
 
+    Component {
+        id: cesiumWindowComponent
+        CesiumWindow {}
+    }
+
+    function openCesiumWindow() {
+        cesiumWindowComponent.createObject(root);
+    }
+
     function applyMapType() {
         if (!flightMapView.map.mapReady)
             return;
@@ -165,6 +174,37 @@ Item {
                 };
                 flightMapView.map.mapReadyChanged.connect(onReady);
             }
+        }
+    }
+
+    // Open 3D Cesium globe in a separate window
+    Rectangle {
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 8
+            rightMargin: 122
+        }
+        width: 30
+        height: 30
+        radius: 5
+        visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+        color: cesiumHover.containsMouse ? "#2563eb" : "#1d4ed8"
+        z: 10
+
+        Text {
+            anchors.centerIn: parent
+            text: "3D"
+            color: "#f1f5f9"
+            font.pixelSize: 10
+        }
+
+        MouseArea {
+            id: cesiumHover
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.openCesiumWindow()
         }
     }
 

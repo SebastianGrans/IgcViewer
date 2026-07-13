@@ -8,15 +8,17 @@ Window {
     height: 800
     visible: true
     title: "3D Globe"
+    color: Theme.windowBg
 
     WebEngineView {
         id: webView
         anchors.fill: parent
         settings.localContentCanAccessRemoteUrls: true
+        backgroundColor: Theme.windowBg
         url: {
             var params = "?key=" + encodeURIComponent(FlightBridge.maptilerKey);
             if (FlightBridge.hasData) {
-                var c = FlightBridge.trackBounds.center;
+                let c = FlightBridge.trackBounds.center;
                 params += "&lat=" + c.latitude + "&lon=" + c.longitude;
             }
             return Qt.resolvedUrl("cesium/cesium_view.html") + params;
@@ -28,8 +30,10 @@ Window {
             // Decimate before handing to Cesium — a raw multi-thousand-point IGC track
             // is unnecessary geometry detail at globe scale and can be heavy to render
             // on machines without GPU acceleration for WebEngine (software Vulkan/GBM fallback).
+            // FIXME: I have no idea if this is actually needed. It was 500 at first, but then I
+            // changed it to 2000 without any issues.
             const all = FlightBridge.trackCoordinates;
-            const maxPoints = 500;
+            const maxPoints = 2000;
             const stride = Math.max(1, Math.ceil(all.length / maxPoints));
             const coords = [];
             for (let i = 0; i < all.length; i += stride)
