@@ -22,6 +22,14 @@
   <div id="cesiumContainer"></div>
   <script>
     let viewer;
+    let trackEntity;
+
+    // Called from the "restore view" button — re-frames the camera on the
+    // flight track, same as the initial flyTo in setFlightPath.
+    window.resetView = function () {
+      if (viewer && trackEntity)
+        viewer.flyTo(trackEntity, { duration: 1.5 });
+    };
 
     // Called from Qt once the flight track is available (QGeoCoordinate list
     // as [lon, lat, alt] triples) — kept as a plain global since QML invokes
@@ -33,16 +41,17 @@
       for (const [lon, lat, alt] of coords)
         flat.push(lon, lat, alt);
 
-      const entity = viewer.entities.add({
+      trackEntity = viewer.entities.add({
         polyline: {
           positions: Cesium.Cartesian3.fromDegreesArrayHeights(flat),
           width: 3,
           material: Cesium.Color.fromCssColorString("#38bdf8"),
         },
       });
-      viewer.flyTo(entity, { duration: 1.5 });
-      // viewer.zoomTo(entity);
+      window.resetView();
     };
+
+
 
     window.setEndpoints = function (sLon, sLat, sAlt, eLon, eLat, eAlt) {
       if (!viewer) return;

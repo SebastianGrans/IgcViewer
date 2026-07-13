@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Window
+import QtQuick.Layouts
 import QtWebEngine
 
 Window {
@@ -67,6 +68,23 @@ Window {
             );
             cesiumWindow.pageReady = true;
             cesiumWindow.syncHighlight();
+        }
+    }
+    RowLayout {
+        anchors {
+            top: parent.top
+            right: parent.right
+            topMargin: 8
+            rightMargin: 8
+        }
+        spacing: 8
+        z: 10
+
+        MapButton {
+            visible: FlightBridge.hasData
+            label: "⊙"
+            labelPixelSize: 15
+            onClicked: webView.runJavaScript("window.resetView()")
         }
     }
 }

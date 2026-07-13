@@ -45,7 +45,7 @@ Item {
             }
             PluginParameter {
                 name: "osm.mapping.custom.host"
-                value: "https://api.maptiler.com/tiles/satellite-v2/%z/%x/%y.png?key=" + FlightBridge.maptilerKey
+                value: "https://api.maptiler.com/tiles/satellite-v2/%z/%x/%y.png?key=" + FlightBridge.maptilerKey // qmllint disable stale-property-read
             }
         }
     }
@@ -192,7 +192,7 @@ Item {
 
         MapButton {
             id: cesiumButton
-            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
             label: "3D"
             onClicked: root.openCesiumWindow()
 
@@ -204,7 +204,7 @@ Item {
 
         MapButton {
             id: satelliteButton
-            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
             label: "Sat"
             active: root.satelliteMode
             onClicked: root.satelliteMode = !root.satelliteMode
