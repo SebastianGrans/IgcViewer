@@ -6,8 +6,6 @@ ColumnLayout {
 
     property bool mapMaximized: false
     property bool statsCollapsed: false
-
-    spacing: 6
     visible: !root.mapMaximized
 
     // Divider with collapse toggle
@@ -36,7 +34,7 @@ ColumnLayout {
         Text {
             text: "⌞ ⌝"
             color: Theme.textMuted
-            font.pixelSize: 11
+            font.pixelSize: Theme.fontLg
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor

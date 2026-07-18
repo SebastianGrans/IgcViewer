@@ -101,16 +101,7 @@ ApplicationWindow {
     // No ScrollView — it steals scroll/drag events and breaks Map pan & zoom.
     ColumnLayout {
         anchors.fill: parent
-        spacing: 0
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.leftMargin: 14
-            Layout.rightMargin: 14
-            implicitHeight: FlightBridge.hasData ? 1 : 0
-            color: Theme.divider
-            visible: !root.mapMaximized
-        }
+        spacing: 10
 
         // map — grows to fill all remaining space
         FlightMap {
@@ -121,7 +112,6 @@ ApplicationWindow {
             Layout.leftMargin: 14
             Layout.rightMargin: 14
             Layout.topMargin: 8
-            Layout.bottomMargin: 8
             maximized: root.mapMaximized
             onToggleMaximize: root.mapMaximized = !root.mapMaximized
         }
@@ -131,7 +121,6 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            Layout.topMargin: 8
             spacing: 10
             visible: !root.mapMaximized
             Button {
@@ -241,18 +230,16 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            Layout.topMargin: 6
             mapMaximized: root.mapMaximized
         }
 
         // altitude chart
         AltitudeChart {
             Layout.fillWidth: true
-            Layout.preferredHeight: 200
-            Layout.topMargin: 10
+            Layout.preferredHeight: 250
             Layout.leftMargin: 14
             Layout.rightMargin: 14
-            Layout.bottomMargin: 10
+            Layout.bottomMargin: 8
             visible: !root.mapMaximized
         }
     }

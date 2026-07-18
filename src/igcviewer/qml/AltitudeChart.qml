@@ -8,6 +8,10 @@ Item {
     // cached scale for click → index mapping
     property real _minAlt: 0
     property real _maxDist: 1
+    readonly property int padLeft: Math.round(Theme.fontSm * 14 / 2.5)
+    readonly property int padBottom: Math.round(Theme.fontSm * 14 / 2.5)
+    readonly property int padTop: 10
+    readonly property int padRight: 20
 
     Connections {
         target: FlightBridge
@@ -27,6 +31,9 @@ Item {
         function onIsDarkChanged() {
             canvas.requestPaint();
         }
+        function onFontScaleChanged() {
+            canvas.requestPaint();
+        }
     }
 
     Canvas {
@@ -36,9 +43,10 @@ Item {
         onPaint: {
             var ctx = getContext("2d");
             var w = width, h = height;
-            var pad = 42;
-            var plotW = w - 2 * pad;
-            var plotH = h - 2 * pad;
+            var padLeft = root.padLeft, padRight = root.padRight;
+            var padTop = root.padTop, padBottom = root.padBottom;
+            var plotW = w - padLeft - padRight;
+            var plotH = h - padTop - padBottom;
 
             // Background
             ctx.fillStyle = Theme.chartBg.toString();
@@ -69,10 +77,10 @@ Item {
             ctx.globalAlpha = 0.6;
             ctx.lineWidth = 0.5;
             for (let gi = 0; gi <= 4; gi++) {
-                let gy = pad + plotH - gi * plotH / 4;
+                let gy = padTop + plotH - gi * plotH / 4;
                 ctx.beginPath();
-                ctx.moveTo(pad, gy);
-                ctx.lineTo(pad + plotW, gy);
+                ctx.moveTo(padLeft, gy);
+                ctx.lineTo(padLeft + plotW, gy);
                 ctx.stroke();
             }
 
@@ -82,8 +90,8 @@ Item {
             ctx.lineWidth = 2;
             ctx.beginPath();
             for (let pi = 0; pi < alts.length; pi++) {
-                let px = pad + (dists[pi] / maxDist) * plotW;
-                let py = pad + plotH - ((alts[pi] - minAlt) / altRange) * plotH;
+                let px = padLeft + (dists[pi] / maxDist) * plotW;
+                let py = padTop + plotH - ((alts[pi] - minAlt) / altRange) * plotH;
                 if (pi === 0)
                     ctx.moveTo(px, py);
                 else
@@ -94,15 +102,15 @@ Item {
             // Highlight
             var hi = FlightBridge.highlightedIndex;
             if (hi >= 0 && hi < alts.length) {
-                let hx = pad + (dists[hi] / maxDist) * plotW;
-                let hy = pad + plotH - ((alts[hi] - minAlt) / altRange) * plotH;
+                let hx = padLeft + (dists[hi] / maxDist) * plotW;
+                let hy = padTop + plotH - ((alts[hi] - minAlt) / altRange) * plotH;
 
                 // Vertical guide line
                 ctx.strokeStyle = "rgba(245, 158, 11, 0.5)";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(hx, pad);
-                ctx.lineTo(hx, pad + plotH);
+                ctx.moveTo(hx, padTop);
+                ctx.lineTo(hx, padTop + plotH);
                 ctx.stroke();
 
                 // Orange dot
@@ -120,18 +128,18 @@ Item {
 
             // Y-axis labels
             ctx.fillStyle = Theme.chartLabel.toString();
-            ctx.font = "10px sans-serif";
+            ctx.font = Theme.fontSm + "pt sans-serif";
             for (let yi = 0; yi <= 4; yi++) {
                 let yVal = Math.round(minAlt + yi * altRange / 4);
-                let yPos = pad + plotH - yi * plotH / 4;
-                ctx.fillText(yVal + "m", 3, yPos + 4);
+                let yPos = padTop + plotH - yi * plotH / 4;
+                ctx.fillText(yVal + " m", 3, yPos + 4);
             }
 
             // X-axis labels
             for (let xi = 0; xi <= 4; xi++) {
                 let xVal = (xi * maxDist / 4).toFixed(1);
-                let xPos = pad + xi * plotW / 4;
-                ctx.fillText(xVal + "km", xPos - 14, h - 6);
+                let xPos = padLeft + xi * plotW / 4;
+                ctx.fillText(xVal + " km", xPos - 14, h - 6);
             }
         }
     }
@@ -143,13 +151,13 @@ Item {
             var dists = root.distances;
             if (dists.length < 2)
                 return;
-            var pad = 42;
-            var plotW = root.width - 2 * pad;
-            if (mouseX < pad || mouseX > pad + plotW) {
+            var padLeft = root.padLeft;
+            var plotW = root.width - padLeft - root.padRight;
+            if (mouseX < padLeft || mouseX > padLeft + plotW) {
                 FlightBridge.setHighlight(-1);
                 return;
             }
-            var clickDist = ((mouseX - pad) / plotW) * root._maxDist;
+            var clickDist = ((mouseX - padLeft) / plotW) * root._maxDist;
             var bestIdx = 0;
             var bestDiff = Math.abs(dists[0] - clickDist);
             for (let i = 1; i < dists.length; i++) {
