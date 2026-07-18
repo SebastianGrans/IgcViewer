@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 
 
 @dataclass
@@ -6,8 +7,7 @@ class FlightPoint:
     lat: float
     lon: float
     alt: int
-    time: str
-    seconds: int
+    time: datetime
 
 
 @dataclass

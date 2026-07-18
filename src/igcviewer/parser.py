@@ -1,5 +1,6 @@
 import math
 import re
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from .models import FlightData, FlightPoint
@@ -8,6 +9,7 @@ _B_RECORD = re.compile(
     r"^B(\d{6})(\d{7})([NS])(\d{8})([EW])([AV])(\d{5})(\d{5})",
     re.MULTILINE,
 )
+_DTE_RECORD = re.compile(r"^HFDTEDATE:(\d{2})(\d{2})(\d{2})", re.MULTILINE)
 
 
 def _parse_coordinate(raw: str, hemisphere: str) -> float:
@@ -47,6 +49,13 @@ def parse_igc(path: str) -> FlightData:
 
     data = FlightData()
 
+    dte = _DTE_RECORD.search(content)
+    if dte:
+        flight_date = date(2000 + int(dte.group(3)), int(dte.group(2)), int(dte.group(1)))
+    else:
+        flight_date = date.today()
+
+    day_offset = 0
     for m in _B_RECORD.finditer(content):
         time_str, lat_raw, lat_hem, lon_raw, lon_hem, status, baro_raw, gps_raw = (
             m.groups()
@@ -58,10 +67,18 @@ def parse_igc(path: str) -> FlightData:
         alt_gps = int(gps_raw)
         alt_baro = int(baro_raw)
         alt = alt_gps if alt_gps > -500 else alt_baro
-        seconds = int(time_str[:2]) * 3600 + int(time_str[2:4]) * 60 + int(time_str[4:6])
-        data.points.append(
-            FlightPoint(lat=lat, lon=lon, alt=alt, time=time_str, seconds=seconds)
-        )
+        dt = datetime(
+            flight_date.year,
+            flight_date.month,
+            flight_date.day,
+            int(time_str[:2]),
+            int(time_str[2:4]),
+            int(time_str[4:6]),
+        ) + timedelta(days=day_offset)
+        if data.points and dt <= data.points[-1].time:
+            day_offset += 1
+            dt += timedelta(days=1)
+        data.points.append(FlightPoint(lat=lat, lon=lon, alt=alt, time=dt))
 
     if len(data.points) < 2:
         return data
@@ -80,7 +97,7 @@ def parse_igc(path: str) -> FlightData:
         cum_dist += seg
         data.distances.append(cum_dist / 1000.0)
 
-        dt = max(1, p2.seconds - p1.seconds)
+        dt = max(1.0, (p2.time - p1.time).total_seconds())
         vz = (p2.alt - p1.alt) / dt
         gs = (seg / dt) * 3.6  # km/h
 
