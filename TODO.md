@@ -24,6 +24,16 @@ first file should be displayed by default
 Add a plugin system somehow, such that you can upload a tracklog to a website such as flightlog.org
 or xcontext
 
+## Open multiple flightlogs
+
+Display the loaded flightlogs as a list
+
+Clicking on it should open it
+
+## Plugin system
+
+For uploading a flight to various flight logging websites. E.g. `flightlog` or `xcontest`, etc.
+
 ## Add ability to replay flight
 
 With a "play" button and a slider to scrub through the flight  
