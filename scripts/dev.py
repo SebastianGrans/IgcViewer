@@ -1,5 +1,7 @@
 """Standalone dev harness: load an IGC file and show a single QML component."""
 
+import signal
+
 import argparse
 import sys
 from pathlib import Path
@@ -11,7 +13,7 @@ from igcviewer.bridge import FlightBridge
 from igcviewer.paths import Paths
 from igcviewer.main import maptiler_key
 
-COMPONENTS = ["AltitudeChart", "FlightMap", "StatsPanel"]
+COMPONENTS = ["AltitudeChart", "FlightMap", "StatsPanel", "AltitudeChartV2"]
 
 
 def main() -> None:
@@ -22,6 +24,8 @@ def main() -> None:
 
     if args.igc_file and not args.igc_file.exists():
         parser.error(f"File not found: {args.igc_file}")
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     component: str = args.component
     igc_file: Path = args.igc_file

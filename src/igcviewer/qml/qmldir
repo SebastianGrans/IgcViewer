@@ -3,6 +3,8 @@ depends QtPositioning 6.0
 typeinfo igcviewer.qmltypes
 AltitudeChart 1.0 AltitudeChart.qml
 AltitudeChartHarness 1.0 AltitudeChartHarness.qml
+AltitudeChartV2 1.0 AltitudeChartV2.qml
+AltitudeChartV2Harness 1.0 AltitudeChartV2Harness.qml
 CesiumWindow 1.0 CesiumWindow.qml
 FlightMap 1.0 FlightMap.qml
 FlightMapHarness 1.0 FlightMapHarness.qml
