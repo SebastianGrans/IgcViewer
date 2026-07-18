@@ -161,7 +161,6 @@ ApplicationWindow {
                 implicitHeight: 26
                 implicitWidth: 84
                 radius: 5
-                clip: true
                 border.color: Theme.divider
                 border.width: 1
                 color: Theme.surfaceLow
@@ -195,6 +194,12 @@ ApplicationWindow {
                             implicitWidth: 28
                             implicitHeight: 26
                             color: Theme.mode === modeDelegate.modelData.mode ? "#1d4ed8" : (modeArea.containsMouse ? Theme.divider : "transparent")
+
+                            // Rounded corners for the first and last buttons
+                            topLeftRadius: modeDelegate.index === 0 ? 5 : 0
+                            bottomLeftRadius: modeDelegate.index === 0 ? 5 : 0
+                            topRightRadius: modeDelegate.index === 2 ? 5 : 0
+                            bottomRightRadius: modeDelegate.index === 2 ? 5 : 0
 
                             Rectangle {
                                 visible: modeDelegate.index > 0
