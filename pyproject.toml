@@ -15,7 +15,11 @@ build-backend = "uv_build"
 igcviewer = "igcviewer.main:main"
 
 [dependency-groups]
-dev = ["ruff>=0.15.20", "ty>=0.0.54"]
+dev = [
+    "ipykernel>=7.3.0",
+    "ruff>=0.15.20",
+    "ty>=0.0.54",
+]
 
 [tool.ruff]
 line-length = 90
