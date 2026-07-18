@@ -6,6 +6,7 @@ Rectangle {
     property string label: ""
     property bool active: false
     property int labelPixelSize: 10
+    property alias hovered: hoverArea.containsMouse
 
     signal clicked
 

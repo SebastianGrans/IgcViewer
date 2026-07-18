@@ -191,40 +191,49 @@ Item {
         z: 10
 
         MapButton {
+            id: cesiumButton
             visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
             label: "3D"
             onClicked: root.openCesiumWindow()
+
+            AppToolTip {
+                visible: cesiumButton.hovered
+                text: qsTr("Open 3D view")
+            }
         }
 
         MapButton {
+            id: satelliteButton
             visible: FlightBridge.hasData && FlightBridge.maptilerKey !== ""
             label: "Sat"
             active: root.satelliteMode
             onClicked: root.satelliteMode = !root.satelliteMode
-            
+
             AppToolTip {
-                visible: satHover.containsMouse
+                visible: satelliteButton.hovered
                 text: qsTr("Toggle satellite layer")
             }
         }
         MapButton {
+            id: fitButton
             visible: FlightBridge.hasData
             label: "⊙"
             labelPixelSize: 15
             onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
-        
+
             AppToolTip {
-                visible: fitHover.containsMouse
+                visible: fitButton.hovered
                 text: qsTr("Re-center view")
             }
         }
         MapButton {
+            id: maximizeButton
             label: root.maximized ? "⊟" : "⛶"
             labelPixelSize: 15
             onClicked: root.toggleMaximize()
 
             AppToolTip {
-                visible: expandHover.containsMouse
+                visible: maximizeButton.hovered
                 text: qsTr("Maximize map")
             }
         }
