@@ -8,4 +8,5 @@ FlightMap 1.0 FlightMap.qml
 Main 1.0 Main.qml
 MapButton 1.0 MapButton.qml
 StatsCard 1.0 StatsCard.qml
+StatsPanel 1.0 StatsPanel.qml
 singleton Theme 1.0 Theme.qml
