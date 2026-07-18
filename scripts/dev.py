@@ -13,7 +13,13 @@ from igcviewer.bridge import FlightBridge
 from igcviewer.paths import Paths
 from igcviewer.main import maptiler_key
 
-COMPONENTS = ["AltitudeChart", "FlightMap", "StatsPanel", "AltitudeChartV2"]
+COMPONENTS = [
+    "AltitudeChart",
+    "FlightMap",
+    "StatsPanel",
+    "AltitudeChartV2",
+    "CesiumWindow",
+]
 
 
 def main() -> None:

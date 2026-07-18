@@ -6,6 +6,7 @@ AltitudeChartHarness 1.0 AltitudeChartHarness.qml
 AltitudeChartV2 1.0 AltitudeChartV2.qml
 AltitudeChartV2Harness 1.0 AltitudeChartV2Harness.qml
 CesiumWindow 1.0 CesiumWindow.qml
+CesiumWindowHarness 1.0 CesiumWindowHarness.qml
 FlightMap 1.0 FlightMap.qml
 FlightMapHarness 1.0 FlightMapHarness.qml
 Main 1.0 Main.qml

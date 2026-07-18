@@ -23,6 +23,13 @@
   <script>
     let viewer;
     let trackEntity;
+    let trackAlpha = 0.80; // matches QML slider default of 25
+    const trackBaseColor = Cesium.Color.fromCssColorString("#38bdf8");
+
+    window.setTrackAlpha = function (alpha) {
+      trackAlpha = alpha
+      // No material reassignment — the CallbackProperty below reads trackAlpha every frame.
+    };
 
     // Called from the "restore view" button — re-frames the camera on the
     // flight track, same as the initial flyTo in setFlightPath.
@@ -45,7 +52,9 @@
         polyline: {
           positions: Cesium.Cartesian3.fromDegreesArrayHeights(flat),
           width: 3,
-          material: Cesium.Color.fromCssColorString("#38bdf8"),
+          material: new Cesium.ColorMaterialProperty(
+            new Cesium.CallbackProperty(() => trackBaseColor.withAlpha(trackAlpha), false)
+          ),
         },
       });
       window.resetView();

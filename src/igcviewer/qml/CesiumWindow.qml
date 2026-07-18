@@ -18,9 +18,7 @@ Window {
             return;
         if (FlightBridge.highlightedIndex >= 0) {
             var c = FlightBridge.highlightCoordinate;
-            webView.runJavaScript(
-                "window.setHighlight(" + c.longitude + "," + c.latitude + "," + c.altitude + ")"
-            );
+            webView.runJavaScript(`window.setHighlight(${c.longitude},${c.latitude},${c.altitude})`);
         } else {
             webView.runJavaScript("window.clearHighlight()");
         }
@@ -28,7 +26,9 @@ Window {
 
     Connections {
         target: FlightBridge
-        function onHighlightChanged() { cesiumWindow.syncHighlight() }
+        function onHighlightChanged() {
+            cesiumWindow.syncHighlight();
+        }
     }
 
     WebEngineView {
@@ -37,10 +37,10 @@ Window {
         settings.localContentCanAccessRemoteUrls: true
         backgroundColor: Theme.windowBg
         url: {
-            var params = "?key=" + encodeURIComponent(FlightBridge.maptilerKey);
+            var params = `?key=${encodeURIComponent(FlightBridge.maptilerKey)}`;
             if (FlightBridge.hasData) {
                 let c = FlightBridge.trackBounds.center;
-                params += "&lat=" + c.latitude + "&lon=" + c.longitude;
+                params += `&lat=${c.latitude}&lon=${c.longitude}`;
             }
             return Qt.resolvedUrl("cesium/cesium_view.html") + params;
         }
@@ -59,18 +59,23 @@ Window {
             const coords = [];
             for (let i = 0; i < all.length; i += stride)
                 coords.push([all[i].longitude, all[i].latitude, all[i].altitude]);
-            webView.runJavaScript("window.setFlightPath(" + JSON.stringify(coords) + ")");
+            webView.runJavaScript(`window.setFlightPath(${JSON.stringify(coords)})`);
             var s = FlightBridge.startCoordinate;
             var e = FlightBridge.endCoordinate;
-            webView.runJavaScript(
-                "window.setEndpoints(" + s.longitude + "," + s.latitude + "," + s.altitude
-                + "," + e.longitude + "," + e.latitude + "," + e.altitude + ")"
-            );
+            webView.runJavaScript(`window.setEndpoints(${s.longitude},${s.latitude},${s.altitude},${e.longitude},${e.latitude},${e.altitude})`);
+
+            cesiumWindow.setTrackAlpha(trackAlphaSlider.value);
             cesiumWindow.pageReady = true;
             cesiumWindow.syncHighlight();
         }
     }
-    RowLayout {
+
+    function setTrackAlpha(alpha) {
+        if (cesiumWindow.pageReady)
+            webView.runJavaScript(`window.setTrackAlpha(${alpha})`);
+    }
+
+    ColumnLayout {
         anchors {
             top: parent.top
             right: parent.right
@@ -84,7 +89,18 @@ Window {
             visible: FlightBridge.hasData
             label: "⊙"
             labelPixelSize: 15
+            Layout.alignment: Qt.AlignRight
             onClicked: webView.runJavaScript("window.resetView()")
+        }
+
+        FancySlider {
+            id: trackAlphaSlider
+            Layout.alignment: Qt.AlignRight
+            label: "◑"
+            from: 0.0
+            value: 0.80 // NOTE: This needs to match the default alpha in cesium_view.html
+            to: 0.99 // NOTE: We set the max to 0.99, because otherwise the track blinks when it hits 1.0
+            onValueChanged: cesiumWindow.setTrackAlpha(value)
         }
     }
 }
