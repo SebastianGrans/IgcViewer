@@ -10,6 +10,26 @@ Window {
     title: "3D Globe"
     color: Theme.windowBg
 
+    property bool pageReady: false
+
+    function syncHighlight() {
+        if (!pageReady)
+            return;
+        if (FlightBridge.highlightedIndex >= 0) {
+            var c = FlightBridge.highlightCoordinate;
+            webView.runJavaScript(
+                "window.setHighlight(" + c.longitude + "," + c.latitude + "," + c.altitude + ")"
+            );
+        } else {
+            webView.runJavaScript("window.clearHighlight()");
+        }
+    }
+
+    Connections {
+        target: FlightBridge
+        function onHighlightChanged() { cesiumWindow.syncHighlight() }
+    }
+
     WebEngineView {
         id: webView
         anchors.fill: parent
@@ -39,6 +59,14 @@ Window {
             for (let i = 0; i < all.length; i += stride)
                 coords.push([all[i].longitude, all[i].latitude, all[i].altitude]);
             webView.runJavaScript("window.setFlightPath(" + JSON.stringify(coords) + ")");
+            var s = FlightBridge.startCoordinate;
+            var e = FlightBridge.endCoordinate;
+            webView.runJavaScript(
+                "window.setEndpoints(" + s.longitude + "," + s.latitude + "," + s.altitude
+                + "," + e.longitude + "," + e.latitude + "," + e.altitude + ")"
+            );
+            cesiumWindow.pageReady = true;
+            cesiumWindow.syncHighlight();
         }
     }
 }
