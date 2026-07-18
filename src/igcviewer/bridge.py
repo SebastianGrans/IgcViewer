@@ -42,23 +42,19 @@ class FlightBridge(QObject):
 
     _instance: ClassVar[FlightBridge | None] = None
     _maptiler_key: ClassVar[str] = ""
+    _flight: FlightData
+    _highlighted_index: int = -1
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
         FlightBridge._instance = self
         self._flight = FlightData()
-        self._highlighted_index = -1
 
     @classmethod
     def instance(cls) -> FlightBridge:
         if cls._instance is None:
             raise RuntimeError("FlightBridge singleton not yet created")
         return cls._instance
-
-    @Property(str, constant=True)
-    def maptilerKey(self) -> str:
-        log.debug("Maptiler API key loaded.")
-        return FlightBridge._maptiler_key
 
     # ------------------------------------------------------------------ slots
 
@@ -80,6 +76,11 @@ class FlightBridge(QObject):
         self.highlightChanged.emit(index)
 
     # --------------------------------------------------------------- properties
+
+    @Property(str, constant=True)
+    def maptilerKey(self) -> str:
+        log.debug("Maptiler API key loaded.")
+        return FlightBridge._maptiler_key
 
     @Property(bool, notify=flightLoaded)
     def hasData(self) -> bool:
@@ -183,7 +184,7 @@ class FlightBridge(QObject):
             return QGeoCoordinate()
 
         p = self._flight.points[index]
-        return QGeoCoordinate(p.lat, p.lon)
+        return QGeoCoordinate(p.lat, p.lon, p.alt)
 
     @Property(QGeoCoordinate, notify=flightLoaded)
     def startCoordinate(self) -> QGeoCoordinate:
