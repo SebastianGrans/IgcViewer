@@ -39,7 +39,7 @@ def arg_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _maptiler_key() -> str:
+def maptiler_key() -> str:
     if key := os.environ.get("MAPTILER_KEY"):
         return key
     key_file = Path(".vscode/key.txt")
@@ -68,7 +68,7 @@ def main() -> None:
     app.setApplicationName("IGC Flight Viewer")
     app.setOrganizationName("igcviewer")
 
-    FlightBridge._maptiler_key = _maptiler_key()
+    FlightBridge._maptiler_key = maptiler_key()
 
     engine = QQmlApplicationEngine()
     engine.addImportPath(str(Path(__file__).parent))

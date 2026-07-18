@@ -5,8 +5,10 @@ AltitudeChart 1.0 AltitudeChart.qml
 AltitudeChartHarness 1.0 AltitudeChartHarness.qml
 CesiumWindow 1.0 CesiumWindow.qml
 FlightMap 1.0 FlightMap.qml
+FlightMapHarness 1.0 FlightMapHarness.qml
 Main 1.0 Main.qml
 MapButton 1.0 MapButton.qml
 StatsCard 1.0 StatsCard.qml
 StatsPanel 1.0 StatsPanel.qml
+StatsPanelHarness 1.0 StatsPanelHarness.qml
 singleton Theme 1.0 Theme.qml

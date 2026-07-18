@@ -51,3 +51,7 @@ angle during the replay.
 https://github.com/surajmandalcell/libigc
 
 The parser that was ported from the original C code is very basic, and probably not very robust.
+
+## Tests
+
+The project is getting big enough that I should set up a test suite.
