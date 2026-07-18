@@ -180,7 +180,7 @@ Item {
 
     // Map toolbar — buttons laid out right-to-left; hidden buttons collapse
     // automatically instead of leaving a gap (unlike the old fixed-margin approach).
-    RowLayout {
+    ColumnLayout {
         anchors {
             top: parent.top
             right: parent.right
@@ -191,32 +191,22 @@ Item {
         z: 10
 
         MapButton {
-            id: cesiumButton
-            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
-            label: "3D"
-            onClicked: root.openCesiumWindow()
+            id: maximizeButton
+            label: root.maximized ? "⊟" : "⛶"
+            labelPixelSize: 15
+            Layout.alignment: Qt.AlignRight
+            onClicked: root.toggleMaximize()
 
             AppToolTip {
-                visible: cesiumButton.hovered
-                text: qsTr("Open 3D view")
+                visible: maximizeButton.hovered
+                text: qsTr("Maximize map")
             }
         }
 
-        MapButton {
-            id: satelliteButton
-            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
-            label: "Sat"
-            active: root.satelliteMode
-            onClicked: root.satelliteMode = !root.satelliteMode
-
-            AppToolTip {
-                visible: satelliteButton.hovered
-                text: qsTr("Toggle satellite layer")
-            }
-        }
         MapButton {
             id: fitButton
             visible: FlightBridge.hasData
+            Layout.alignment: Qt.AlignRight
             label: "⊙"
             labelPixelSize: 15
             onClicked: flightMapView.map.fitViewportToGeoShape(FlightBridge.trackBounds, 20)
@@ -226,15 +216,43 @@ Item {
                 text: qsTr("Re-center view")
             }
         }
+
         MapButton {
-            id: maximizeButton
-            label: root.maximized ? "⊟" : "⛶"
-            labelPixelSize: 15
-            onClicked: root.toggleMaximize()
+            id: satelliteButton
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
+            label: "Sat"
+            active: root.satelliteMode
+            onClicked: root.satelliteMode = !root.satelliteMode
+            Layout.alignment: Qt.AlignRight
 
             AppToolTip {
-                visible: maximizeButton.hovered
-                text: qsTr("Maximize map")
+                visible: satelliteButton.hovered
+                text: qsTr("Toggle satellite layer")
+            }
+        }
+
+        MapButton {
+            id: cesiumButton
+            visible: FlightBridge.hasData && FlightBridge.maptilerKey !== "" // qmllint disable stale-property-read
+            label: "3D"
+            onClicked: root.openCesiumWindow()
+            Layout.alignment: Qt.AlignRight
+
+            AppToolTip {
+                visible: cesiumButton.hovered
+                text: qsTr("Open 3D view")
+            }
+        }
+
+        FancySlider {
+            id: trackAlphaSlider
+            Layout.alignment: Qt.AlignRight
+            label: "◑"
+            from: 0.0
+            value: 0.80
+            to: 0.99
+            onValueChanged: {
+                trackPolyline.line.color = Qt.rgba(0.22, 0.78, 0.97, value);
             }
         }
     }
