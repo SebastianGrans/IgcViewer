@@ -53,8 +53,9 @@ Window {
             // on machines without GPU acceleration for WebEngine (software Vulkan/GBM fallback).
             // FIXME: I have no idea if this is actually needed. It was 500 at first, but then I
             // changed it to 2000 without any issues.
+            // FIXME2: 10000 isn't a problem either. Should probably not have this limit at all...
             const all = FlightBridge.trackCoordinates;
-            const maxPoints = 2000;
+            const maxPoints = 10000;
             const stride = Math.max(1, Math.ceil(all.length / maxPoints));
             const coords = [];
             for (let i = 0; i < all.length; i += stride)

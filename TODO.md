@@ -55,3 +55,13 @@ The parser that was ported from the original C code is very basic, and probably 
 ## Tests
 
 The project is getting big enough that I should set up a test suite.
+
+I found this: <https://pgpilot.app/> It's an interesting project, but the best part is that it
+allows me to download the igc files. This I can use for testing :)
+
+## Make the GUI less AIy
+
+It is clear that `pgpilot.app` is also written with AI, and the interface looks very similar to
+what I have as well (since I have also used AI a lot).
+
+I should revamp the GUI to strip it of it's AI aesthetics.
